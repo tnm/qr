@@ -30,7 +30,7 @@ Create the Queue & Basic Push and Pop
 **qr.py** includes a single class, **Qr**. To create a new queue, just create an instance as follows:
 
 * A first-position **key** argument is required. It's the Redis key you want to be associated with the queue.
-* A second-position **size** argument is optional. Without a size argument you get an unsized queue. With a specified size, you get a sized queue.
+* A second-position **size** argument is optional. Without a size argument you get an unbounded queue. With a specified size, you get a bounded queue.
 
 Cool, let's create a version of The Beatles that, rather ahistorically, has just three members. Start your Redis server, and now:
 
