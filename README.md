@@ -27,7 +27,7 @@ Consider a use case like this: you may have any number of comments on a blog pos
 Create the Queue & Basic Push and Pop
 -------------------------------------
 
-**rq.py** is single-file Python module. It includes a single class, **Rq**. To create a new queue, just create an instance of the Rq class:
+**rq.py** is single-file Python module. It includes a single class, **Rq**. To create a new queue, just create an instance:
 
 * A first-position **key** argument is required. It's the Redis key you want to be associated with the queue.
 * A second-position **size** argument is optional. Without a size argument you get an unsized queue. With a specified size, you get a sized queue.
