@@ -18,11 +18,11 @@ A **queue** is a simple data structure. You **push** values to the back of the q
 
 You can implement two kinds of queues with QR: 
 
-* **Sized queue**: once the queue reaches a specified size of elements, it will atomically pop the oldest element.
+* **Bounded queue**: once the queue reaches a specified size of elements, it will atomically pop the oldest element.
 
-* **Unsized queue**: the queue can grow to any size, and will not pop elements unless you explicitly ask it to.
+* **Unbounded queue**: the queue can grow to any size, and will not pop elements unless you explicitly ask it to.
 
-Consider a use case like this: you may have any number of comments on a blog post, but you only want to display the most recent 10. You can use a sized queue, and pop the older comments as new ones come in. (We'll do that exact thing in an example at the end of this README).
+Consider a use case like this: you may have any number of comments on a blog post, but you only want to display the most recent 10. You can use a bounded queue, and pop the older comments as new ones come in. (We'll do that exact thing in an example at the end of this README).
 
 Create the Queue & Basic Push and Pop
 -------------------------------------
