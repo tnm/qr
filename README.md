@@ -1,7 +1,7 @@
 QR
 ------
 
-**QR** is a Python object for creating and working with **queue data structures for Redis**. Redis is particularly suited for use as a queue, and QR makes it very easy to implement one in Python. QR works best for (and simplifies) the creation of **bounded queues**: queues with a defined size of elements. 
+**QR** makes it easy to create and work with **queue data structures for Redis**. Redis is particularly suited for use as a queue, and QR makes it simple to implement one in Python. QR works best for (and simplifies) the creation of **bounded queues**: queues with a defined size of elements. 
 
 
 Quick Setup
