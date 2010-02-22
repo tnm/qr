@@ -8,8 +8,8 @@ except ImportError:
 #The redis-py object -- modify/remove this to match with your namespacing
 redis = redis.Redis()	
 
-#The Rq object
-class Rq(object):	
+#The Qr object
+class Qr(object):	
 	
 	#Key is required; specify a size to get a sized queue
 	def __init__(self, key, size=None):
