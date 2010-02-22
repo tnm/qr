@@ -1,7 +1,7 @@
 QR
 ------
 
-**QR** is a Python object for creating and working with **queue data structures for Redis**. Redis is particularly suited for use as a queue, and QR makes it absurdly easy to implement one in Python. QR works best for (and simplifies) the creation of **bounded queues**: queues with a defined size of elements. 
+**QR** is a Python object for creating and working with **queue data structures for Redis**. Redis is particularly suited for use as a queue, and QR makes it very easy to implement one in Python. QR works best for (and simplifies) the creation of **bounded queues**: queues with a defined size of elements. 
 
 
 Quick Setup
@@ -56,7 +56,7 @@ You are now the owner of a QR object ('beatles_queue'), associated with the Redi
 	PUSHED: 'George'
 	POPPED: 'Ringo'
 
-Since the queue was **capped at three elements**, the addition of 'George' resulted in a pop of the first element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
+Since the queue was **capped at three elements**, the addition of 'George' resulted in a pop of the first-in element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
 
 You can utilize **pop** at anytime. To pop the oldest element, just do this:
 
