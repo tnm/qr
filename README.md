@@ -8,7 +8,7 @@ Quick Setup
 ------------
 You'll need [Redis](http://code.google.com/p/redis/ "Redis") itself, and the current Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Put **rq.py** in your PYTHONPATH and you're all set.
 
-**rq.py** also creates an instance of the redis-py interface object. You may already have instantiated the object in your code, so you'll want to ensure consistent namespacing. You can remove this line of code, modify the namespacing, or adjust your existing namespacing -- whatever works best for you.
+**qr.py** also creates an instance of the redis-py interface object. You may already have instantiated the object in your code, so you'll want to ensure consistent namespacing. You can remove this line of code, modify the namespacing, or adjust your existing namespacing -- whatever works best for you.
 
 
 QR as Abstraction
@@ -27,7 +27,7 @@ Consider a use case like this: you may have any number of comments on a blog pos
 Create the Queue & Basic Push and Pop
 -------------------------------------
 
-**rq.py** is single-file Python module. It includes a single class, **Rq**. To create a new queue, just create an instance:
+**qr.py** includes a single class, **Qr**. To create a new queue, just create an instance as follows:
 
 * A first-position **key** argument is required. It's the Redis key you want to be associated with the queue.
 * A second-position **size** argument is optional. Without a size argument you get an unsized queue. With a specified size, you get a sized queue.
