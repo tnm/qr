@@ -1,7 +1,7 @@
 QR
 ------
 
-**QR** is a Python object that instantiates a **queue data structure for Redis**. Redis is particularly suited for use as a queue, and QR makes it absurdly easy to implement one in Python. QR works best for (and simplifies) the creation of **bounded queues**: queues with a defined size of elements. 
+**QR** is a Python object for creating and working with **queue data structures for Redis**. Redis is particularly suited for use as a queue, and QR makes it absurdly easy to implement one in Python. QR works best for (and simplifies) the creation of **bounded queues**: queues with a defined size of elements. 
 
 
 Quick Setup
@@ -110,8 +110,18 @@ Imagine you have a Django view that handles blog comments. You have an arbitrary
 
 	#Now send the comments list back to your template. In the template, you could loop through it and you're done.
 	render_to_response ('blog.html', comments_for_template=comments_for_template)
+
 	
-	
+MIT License
+------------
+
+Copyright (c) 2010 Ted Nyman
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 	
