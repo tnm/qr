@@ -18,7 +18,7 @@ A **queue** is a simple data structure. You **push** values to the back of the q
 
 You can implement two kinds of queues with QR: 
 
-* **Bounded queue**: once the queue reaches a specified size of elements, it will atomically pop the oldest element.
+* **Bounded queue**: once the queue reaches a specified size of elements, it will pop the oldest element.
 
 * **Unbounded queue**: the queue can grow to any size, and will not pop elements unless you explicitly ask it to.
 
