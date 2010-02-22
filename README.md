@@ -109,7 +109,7 @@ Imagine you have a Django view that handles blog comments. You have an arbitrary
 	comments_for_template = most_recent_comments.elements()
 
 	#Now send the comments list back to your template. In the template, you could loop through it and you're done.
-	render_to_response ('blog.html', comments_for_template=comments_for_template)
+	render_to_response('blog.html', comments_for_template=comments_for_template)
 
 	
 MIT License
