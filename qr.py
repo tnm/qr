@@ -36,7 +36,7 @@ class Qr(object):
 	def pop(self):
 		key = self.key
 		popped = redis.rpop(key)
-		print 'FOR KEY: %s\nPOPPED: %s' %(key, popped)
+		print 'FOR KEY: %s\nPOPPED: %s' % (key, popped)
 	
 	#Return all elements from the queue as a Python list
 	def elements(self):
