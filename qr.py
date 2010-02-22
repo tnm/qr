@@ -16,7 +16,7 @@ class Qr(object):
 		self.key = key
 		self.size = size		
 
-	#Push an element onto the queue	
+	#Push
 	def push(self, element):
 		key = self.key
 		length = redis.llen(key)
@@ -24,7 +24,7 @@ class Qr(object):
 		if length == self.size:
 			popped = redis.rpop(key)
 			push_it = redis.lpush(key, element)
-			print 'FOR KEY: %s\nPUSHED: %s\nAND POPPED: %s' % (key, element, popped)
+			print 'FOR KEY: %s\nPUSHED: %s\nPOPPED: %s' % (key, element, popped)
 		
 		else:
 			push_it = redis.lpush(key, element)
@@ -32,7 +32,7 @@ class Qr(object):
 
 		
 			
-	#Pop the top(right-most) element from the queue
+	#Pop 
 	def pop(self):
 		key = self.key
 		popped = redis.rpop(key)
