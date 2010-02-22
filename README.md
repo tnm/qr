@@ -6,7 +6,7 @@ QR
 
 Quick Setup
 ------------
-You'll need [Redis](http://code.google.com/p/redis/ "Redis") itself, and the current Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Put **rq.py** in your PYTHONPATH and you're all set.
+You'll need [Redis](http://code.google.com/p/redis/ "Redis") itself, and the current Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Put **qr.py** in your PYTHONPATH and you're all set.
 
 **qr.py** also creates an instance of the redis-py interface object. You may already have instantiated the object in your code, so you'll want to ensure consistent namespacing. You can remove this line of code, modify the namespacing, or adjust your existing namespacing -- whatever works best for you.
 
