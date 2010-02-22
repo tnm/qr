@@ -34,10 +34,10 @@ Create the Queue & Basic Push and Pop
 
 Cool, let's create a version of The Beatles that, rather ahistorically, has just three members. Start your Redis server, and now:
 
-	>> from rq import Rq
-	>> beatles_queue = Rq('Beatles', 3)
+	>> from qr import Qr
+	>> beatles_queue = Qr('Beatles', 3)
 
-You are now the owner of an QR object (with the variable name 'beatles_queue'), associated with the Redis key 'Beatles'. The RQ object has a specified size of 3 elements. Let's push some elements:
+You are now the owner of a QR object ('beatles_queue'), associated with the Redis key 'Beatles'. The QR object has a specified size of 3 elements. Let's push some elements:
 
 	>> beatles_queue.push('Ringo')
 	FOR KEY: 'Beatles'
@@ -97,7 +97,7 @@ A Real-World Example: Blog Comments
 Imagine you have a Django view that handles blog comments. You have an arbitrary number of blog comments. You want to return only the most recent ten blog comments to your template. Skipping to the relevant parts, it's as easy as this:
 
 	#The recent comments are represented as a queue with 10 elements
-	most_recent_comments = Rq('recent_comments', 10)
+	most_recent_comments = Qr('recent_comments', 10)
 
 	#The view has receieved a new comment from a HTML form!
 	new_comment = 'No way man, LaForge was the best character!'
