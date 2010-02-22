@@ -100,7 +100,7 @@ Imagine you have a Django view that handles blog comments. You have an arbitrary
 	most_recent_comments = Qr('recent_comments', 10)
 
 	#The view has receieved a new comment from a HTML form!
-	new_comment = 'No way man, LaForge was the best character!'
+	new_comment = 'No way man, La Forge was the best character!'
 
 	#Add the comment to your comment queue. If there are already 10 comments, the oldest one gets popped.
 	most_recent_comments.push(new_comment)
