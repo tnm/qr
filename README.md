@@ -90,6 +90,14 @@ For example:
 	>>beatles_queue.elements_as_json()
 	'['Ringo', 'John', 'George']'
 
+To-Do, Additions, More
+-----------------------
+
+I plan on expanding QR to include a second class: a Redis-based **deque** object. After that, I'll implement a **stack** object to round things out. 
+
+Feel free to fork.
+
+Author: Ted Nyman | @tnm8
 
 A Real-World Example: Blog Comments
 -----------------------------------
