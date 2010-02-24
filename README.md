@@ -1,7 +1,7 @@
 QR
 =====
 
-**QR** helps you create and work with **queue data structures for Redis**. Redis is particularly suited for work with abstract queues, and QR makes the work even easier in Python. QR works best for (and simplifies) the creation of **bounded queues**: queues with a defined size of elements. 
+**QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes the work even easier in Python. QR works best for (and simplifies) the creation of **bounded** deques, queue, and stacks (herein, DQS's), a defined size of elements. 
 
 
 Quick Setup
@@ -14,60 +14,94 @@ You'll need [Redis](http://code.google.com/p/redis/ "Redis") itself, and the cur
 QR as Abstraction
 ------------------
 
-A **queue** is a simple data structure. You **push** values to the back of the queue and **pop** values from the front. 
+You probably now this already, but here's the 20-second overview of these three data structures.
 
-You can implement two kinds of queues with QR: 
+A **deque**, or double-ended queue:
 
-* **Bounded queue**: once the queue reaches a specified size of elements, it will pop the oldest element.
+* You can push values to the front *or* back of a deque, and pop elements from the front *or* back of the deque. 
+* It's also FIFO.
 
-* **Unbounded queue**: the queue can grow to any size, and will not pop elements unless you explicitly ask it to.
+A **queue**:
+
+* You **push** values to the back of the queue and **pop** values from the front. 
+* It's first in, first out (FIFO).
+
+A **stack**, or, as they say in German, a 'Stapelspeicher':
+
+* You can push values to the back of the stack and pop values from the back of the stack.
+* It's last in, first out (LIFO).
+
+For each DQS structure, you can create two varieties:
+
+* **Bounded**: once the DQS reaches a specified size of elements, it will pop the oldest element.
+
+* **Unbounded**: the DQS can grow to any size, and will not pop elements unless you explicitly ask it to.
 
 Consider a use case like this: you may have any number of comments on a blog post, but you only want to display the most recent 10. You can use a bounded queue, and pop the older comments as new ones come in. (We'll do that exact thing in an example at the end of this README).
 
-Create the Queue & Basic Push and Pop
+Create a DQS 
 -------------------------------------
 
-**qr.py** includes a single class, **Qr**. To create a new queue, just create an instance as follows:
+**qr.py** includes three classes: **Deque**, **Queue**, and, **Stack**. To create a new DQS, just create an instance as follows:
 
-* A first-position **key** argument is required. It's the Redis key you want to be associated with the queue.
-* A second-position **size** argument is optional. Without a size argument you get an unbounded queue. With a specified size, you get a bounded queue.
+* A first-position **key** argument is required. It's the Redis key you want to be associated with the DQS.
+* A second-position **size** argument is optional. Without a size argument you get an unbounded DQS. With a specified size, you get a bounded DQS.
+
+A Queue
+--------
 
 Cool, let's create a version of The Beatles that, rather ahistorically, has just three members. Start your Redis server, and now:
 
-	>> from qr import Qr
-	>> beatles_queue = Qr('Beatles', 3)
+	>> from qr import Queue
+	>> bqueue = Queue('Beatles', 3)
 
-You are now the owner of a QR object ('beatles_queue'), associated with the Redis key 'Beatles'. The QR object has a specified size of 3 elements. Let's push some elements:
+You are now the owner of a Queue object ('bqueue'), associated with the Redis key 'Beatles'. The Queue object has a specified size of 3 elements. Let's push some elements:
 
-	>> beatles_queue.push('Ringo')
-	FOR KEY: 'Beatles'
+	>> bqueue.push('Ringo')
 	PUSHED: 'Ringo'
 
-	>> beatles_queue.push('Paul')
-	FOR KEY: 'Beatles'
+	>> bqueue.push('Paul')
 	PUSHED: 'Paul'
 
-	>> beatles_queue.push('John')
-	FOR KEY: 'Beatles'
+	>> bqueue.push('John')
 	PUSHED: 'John'
 
-	>> beatles_queue.push('George')
-	FOR KEY: 'Beatles'
-	PUSHED: 'George'
-	POPPED: 'Ringo'
+	>> bqueue.push('George')
+	PUSHED: 'George' | POPPED: 'Ringo'
 
 Since the queue was **capped at three elements**, the addition of 'George' resulted in a pop of the first-in element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
 
 You can utilize **pop** at anytime. To pop the oldest element, just do this:
 
-	>>beatles_queue.pop()
-	FOR KEY: 'Beatles'
+	>>bqueue.pop()
 	POPPED: 'Paul'
+
+A Deque
+--------
+
+If you wanted a deque for the Beatles, you'd just do:
+
+	>> from qr import Deque
+	>> beatles_deque = Deque('Beatles', 3)
+
+Instead of **push* and *pop*, you can utiize **frontpush**, **frontpop**, **backpush**, and **backpop** methods.
+
+
+A Stack
+--------
+
+The Beatles stack is as easy as:
+
+	>> from qr import Stack
+	>> beatles_stack = Stack('Beatles', 3)
+
+The stack has the same methods as the queue.
+
 
 Return the Values
 -----------------
 
-Let's return some data from the queue! QR includes two return-style methods: **elements** and **elements_as_json**. 
+Let's return some data from a DQS! Each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
 
 * Call **elements**, and you'll get back a Python list. 
 
@@ -93,13 +127,13 @@ For example:
 To-Do, Additions, More
 -----------------------
 
-I plan on expanding QR to include a second class: a Redis-based **deque** object. After that, I'll implement a **stack** object to round things out. 
+Some more documentation will be added soon. I will likely implement a few more abstract data structures to make this something of a library. :)
 
-Feel free to fork.
+Feel free to fork! 
 
 Author: Ted Nyman | @tnm8
 
-A Real-World Example: Blog Comments
+Also, A Real-World Example: Blog Comments
 -----------------------------------
 
 Imagine you have a Django view that handles blog comments. You have an arbitrary number of blog comments. You want to return only the most recent ten blog comments to your template. Skipping to the relevant parts, it's as easy as this:

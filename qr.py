@@ -1,17 +1,94 @@
-#import redis-py and Python's JSON module
+
+"""
+QR: Redis-Based Data Structures in Python
+
+	24 Feb 2010 | QR now has deque and stack data structures (0.1.2)
+	22 Feb 2010 | First public release of QR (0.1.1)
+"""
+
+__author__ = 'Ted Nyman'
+__version__ = '0.1.2'
+__license__ = 'MIT'
+
 import redis
+
 try:
     import json
 except ImportError:
     import simplejson as json
 
 #The redis-py object -- modify/remove this to match with your namespacing
-redis = redis.Redis()	
-
-#The Qr object
-class Qr(object):	
+redis = redis.Redis()
 	
-	#Key is required; specify a size to get a sized queue
+#The Deque
+class Deque(object):
+
+	#Key is required; specify a size to get a bounded deque
+	def __init__(self, key, size=None):
+		self.key = key
+		self.size = size		
+
+	#Push to Back
+	def pushback(self, element):
+		key = self.key
+		length = redis.llen(key)
+
+		if length == self.size:
+			popped = redis.rpop(key)
+			push_it = redis.lpush(key, element)
+			print 'PUSHED: %s | POPPED: %s' % (element, popped)
+		
+		else:
+			push_it = redis.lpush(key, element)
+			print 'PUSHED: %s' % (element)
+		
+	#Push to Front
+	def pushfront(self, element):
+		key = self.key
+		length = redis.llen(key)
+
+		if length == self.size:
+			popped = redis.lpop(key)
+			push_it = redis.rpush(key, element)
+			print 'PUSHED: %s | POPPED: %s' % (element, popped)
+		
+		else:
+			push_it = redis.rpush(key, element)
+			print 'PUSHED: %s' % (element)
+
+	#Pop Back Element
+	def popfront(self):
+		key = self.key
+		popped = redis.lpop(key)
+		print 'POPPED: %s' % (popped)
+
+
+	#Pop Front Element
+	def popback(self):
+		key = self.key
+		popped = redis.rpop(key)
+		print 'POPPED: %s' % (popped)	
+
+
+	#Return all elements from the deque as a Python list
+	def elements(self):
+		key = self.key
+		size = self.size
+		all_elements = redis.lrange(key, 0, size)
+		return all_elements
+				
+	#Return all elements from the deque as a JSON object
+	def elements_as_json(self):
+		key = self.key
+		size = self.size
+		all_elements = redis.lrange(key, 0, size)
+		all_elements_as_json = json.dumps(all_elements)
+		return all_elements_as_json
+
+#The Queue
+class Queue(object):	
+	
+	#Key is required; specify a size to get a bounded queue
 	def __init__(self, key, size=None):
 		self.key = key
 		self.size = size		
@@ -24,19 +101,17 @@ class Qr(object):
 		if length == self.size:
 			popped = redis.rpop(key)
 			push_it = redis.lpush(key, element)
-			print 'FOR KEY: %s\nPUSHED: %s\nPOPPED: %s' % (key, element, popped)
+			print 'PUSHED: %s | POPPED: %s' % (element, popped)
 		
 		else:
 			push_it = redis.lpush(key, element)
-			print 'FOR KEY: %s\nPUSHED: %s' % (key, element)
-
+			print 'PUSHED: %s' % (element)
 		
-			
 	#Pop 
 	def pop(self):
 		key = self.key
 		popped = redis.rpop(key)
-		print 'FOR KEY: %s\nPOPPED: %s' % (key, popped)
+		print 'POPPED: %s' % (popped)
 	
 	#Return all elements from the queue as a Python list
 	def elements(self):
@@ -44,8 +119,50 @@ class Qr(object):
 		size = self.size
 		all_elements = redis.lrange(key, 0, size)
 		return all_elements
-			
+				
+	#Return all elements from the queue as a JSON object
+	def elements_as_json(self):
+		key = self.key
+		size = self.size
+		all_elements = redis.lrange(key, 0, size)
+		all_elements_as_json = json.dumps(all_elements)
+		return all_elements_as_json
+
+#The Stack
+class Stack(object):
+
+	#Key is required; specify a size to get a bounded stack
+	def __init__(self, key, size=None):
+		self.key = key
+		self.size = size		
+
+	#Push
+	def push(self, element):
+		key = self.key
+		length = redis.llen(key)
+
+		if length == self.size:
+			popped = redis.lpop(key)
+			push_it = redis.lpush(key, element)
+			print 'PUSHED: %s | POPPED: %s' % (element, popped)
 		
+		else:
+			push_it = redis.lpush(key, element)
+			print 'PUSHED: %s' % (element)
+		
+	#Pop 
+	def pop(self):
+		key = self.key
+		popped = redis.lpop(key)
+		print 'POPPED: %s' % (popped)
+	
+	#Return all elements from the stack as a Python list
+	def elements(self):
+		key = self.key
+		size = self.size
+		all_elements = redis.lrange(key, 0, size)
+		return all_elements
+					
 	#Return all elements from the queue as a JSON object
 	def elements_as_json(self):
 		key = self.key
@@ -55,8 +172,7 @@ class Qr(object):
 		return all_elements_as_json
 
 
-
-
+	
 
 	
 
