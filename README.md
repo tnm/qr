@@ -14,7 +14,7 @@ You'll need [Redis](http://code.google.com/p/redis/ "Redis") itself, and the cur
 QR as Abstraction
 ------------------
 
-You probably now this already, but here's the 20-second overview of these three data structures.
+You probably know this already, but here's the 20-second overview of these three data structures.
 
 A **deque**, or double-ended queue:
 
