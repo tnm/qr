@@ -23,12 +23,12 @@ A **deque**, or double-ended queue:
 
 A **queue**:
 
-* You **push** values to the back of the queue and **pop** values from the front.
+* You push elements to the back of the queue and pop elements from the front.
 * It's also FIFO.
 
 A **stack**, or, as they say in German, a 'Stapelspeicher':
 
-* You can push values to the back of the stack and pop values from the back of the stack.
+* You can push elements to the back of the stack and pop elements from the back of the stack.
 * It's last in, first out (LIFO).
 
 For each DQS structure, you can create two varieties:
