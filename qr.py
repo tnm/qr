@@ -56,14 +56,14 @@ class Deque(object):
 			push_it = redis.rpush(key, element)
 			print 'PUSHED: %s' % (element)
 
-	#Pop Back Element
+	#Pop Front Element
 	def popfront(self):
 		key = self.key
 		popped = redis.lpop(key)
 		print 'POPPED: %s' % (popped)
 
 
-	#Pop Front Element
+	#Pop Back Element
 	def popback(self):
 		key = self.key
 		popped = redis.rpop(key)
