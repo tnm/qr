@@ -42,7 +42,7 @@ Consider a use case like this: you may have any number of comments on a blog pos
 Create a DQS 
 -------------------------------------
 
-**qr.py** includes three classes: **Deque**, **Queue**, and, **Stack**. To create a new DQS, just create an instance as follows:
+**qr.py** includes three classes: **Deque**, **Queue**, and **Stack**. To create a new DQS, just create an instance as follows:
 
 * A first-position **key** argument is required. It's the Redis key you want to be associated with the DQS.
 * A second-position **size** argument is optional. Without a size argument you get an unbounded DQS. With a specified size, you get a bounded DQS.
