@@ -170,10 +170,3 @@ class Stack(object):
 		all_elements = redis.lrange(key, 0, size)
 		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
-
-
-	
-
-	
-
-
