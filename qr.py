@@ -156,14 +156,14 @@ class Stack(object):
 		popped = redis.lpop(key)
 		print 'POPPED: %s' % (popped)
 	
-	#Return all elements from the stack as a Python list
+	#Return all elements as a Python list
 	def elements(self):
 		key = self.key
 		size = self.size
 		all_elements = redis.lrange(key, 0, size)
 		return all_elements
 					
-	#Return all elements from the queue as a JSON object
+	#Return all elements as a JSON object
 	def elements_as_json(self):
 		key = self.key
 		size = self.size
