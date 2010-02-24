@@ -84,7 +84,7 @@ If you wanted a deque for the Beatles, you'd just do:
 	>> from qr import Deque
 	>> beatles_deque = Deque('Beatles', 3)
 
-Instead of **push** and **pop**, you can use **frontpush**, **frontpop**, **backpush**, and **backpop** methods.
+Instead of **push** and **pop**, you can use **pushfront**, **popfront**, **pushback**, and **popback** methods.
 
 
 A Stack
