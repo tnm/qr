@@ -33,7 +33,7 @@ A **stack**, or, as they say in German, a 'Stapelspeicher':
 
 For each DQS structure, you can create two varieties:
 
-* **Bounded**: once the DQS reaches a specified size of elements, it will pop the oldest element.
+* **Bounded**: once the DQS reaches a specified size of elements, it will pop an element.
 
 * **Unbounded**: the DQS can grow to any size, and will not pop elements unless you explicitly ask it to.
 
