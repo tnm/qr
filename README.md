@@ -19,12 +19,12 @@ You probably now this already, but here's the 20-second overview of these three 
 A **deque**, or double-ended queue:
 
 * You can push values to the front *or* back of a deque, and pop elements from the front *or* back of the deque. 
-* It's also FIFO.
+* With respect to the elements, it's first in, first out (FIFO).
 
 A **queue**:
 
-* You **push** values to the back of the queue and **pop** values from the front. 
-* It's first in, first out (FIFO).
+* You **push** values to the back of the queue and **pop** values from the front.
+* It's also FIFO.
 
 A **stack**, or, as they say in German, a 'Stapelspeicher':
 
