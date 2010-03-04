@@ -67,14 +67,15 @@ You are now the owner of a Queue object ('bqueue'), associated with the Redis ke
 	PUSHED: 'John'
 
 	>> bqueue.push('George')
-	PUSHED: 'George' | POPPED: 'Ringo'
+	PUSHED: 'George' 
+        'Ringo'
 
 Since the queue was **capped at three elements**, the addition of 'George' resulted in a pop of the first-in element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
 
-You can utilize **pop** at anytime. To pop the oldest element, just do this:
+You can utilize **pop** at anytime. Any pop command will return the relevant element. To pop the oldest element, just do this:
 
 	>>bqueue.pop()
-	POPPED: 'Paul'
+	'Paul'
 
 A Deque
 --------
