@@ -51,7 +51,7 @@ class Deque(object):
 		if length == self.size:
 			popped = redis.lpop(key)
 			push_it = redis.rpush(key, element)
-			print 'PUSHED: %s' (element)
+			print 'PUSHED: %s' % (element)
 			return popped 
 		
 		else:
@@ -103,7 +103,7 @@ class Queue(object):
 		if length == self.size:
 			popped = redis.rpop(key)
 			push_it = redis.lpush(key, element)
-			print 'PUSHED: %s' (element)
+			print 'PUSHED: %s' % (element)
 			return popped 
 		
 		else:
@@ -147,7 +147,7 @@ class Stack(object):
 		if length == self.size:
 			popped = redis.lpop(key)
 			push_it = redis.lpush(key, element)
-			print 'PUSHED: %s' (element)
+			print 'PUSHED: %s' % (element)
 			return popped 
 		
 		else:
