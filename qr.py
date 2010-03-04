@@ -1,7 +1,7 @@
 """
 QR: Redis-Based Data Structures in Python
 
-         4 Mar 2010 | Pop commands now return just the value
+	 4 Mar 2010 | Pop commands now return just the value
 	24 Feb 2010 | QR now has deque and stack data structures (0.1.2)
 	22 Feb 2010 | First public release of QR (0.1.1)
 """

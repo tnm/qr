@@ -68,7 +68,7 @@ You are now the owner of a Queue object ('bqueue'), associated with the Redis ke
 
 	>> bqueue.push('George')
 	PUSHED: 'George' 
-        'Ringo'
+	'Ringo'
 
 Since the queue was **capped at three elements**, the addition of 'George' resulted in a pop of the first-in element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
 
