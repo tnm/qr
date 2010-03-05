@@ -80,10 +80,10 @@ You can utilize **pop** at anytime. Any pop command will return the relevant ele
 A Deque
 --------
 
-If you wanted a deque for the Beatles, you'd just do:
+If you wanted a deque for the Rolling Stones, you'd just do:
 
 	>> from qr import Deque
-	>> beatles_deque = Deque('Beatles', 3)
+	>> stones_deque = Deque('Stones', 3)
 
 Instead of **push** and **pop**, you can use **pushfront**, **popfront**, **pushback**, and **popback** methods.
 
@@ -91,10 +91,10 @@ Instead of **push** and **pop**, you can use **pushfront**, **popfront**, **push
 A Stack
 --------
 
-The Beatles stack is as easy as:
+The Kinks stack is as easy as:
 
 	>> from qr import Stack
-	>> beatles_stack = Stack('Beatles', 3)
+	>> kinks_stack = Stack('Kinks', 3)
 
 The stack has the same methods as the queue.
 
