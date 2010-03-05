@@ -1,13 +1,14 @@
 """
 QR: Redis-Based Data Structures in Python
 
+         5 Mar 2010 | Returns work correctly for both bounded and unbounded
 	 4 Mar 2010 | Pop commands now return just the value
 	24 Feb 2010 | QR now has deque and stack data structures (0.1.2)
 	22 Feb 2010 | First public release of QR (0.1.1)
 """
 
 __author__ = 'Ted Nyman'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 __license__ = 'MIT'
 
 import redis
@@ -24,7 +25,7 @@ redis = redis.Redis()
 class Deque(object):
 
 	#Key is required; specify a size to get a bounded deque
-	def __init__(self, key, size=100000000):
+	def __init__(self, key, size=None):
 		self.key = key
 		self.size = size		
 
@@ -75,23 +76,23 @@ class Deque(object):
 	#Return all elements from the deque as a Python list
 	def elements(self):
 		key = self.key
-		size = self.size
-		all_elements = redis.lrange(key, 0, size)
+		length = redis.llen(key)
+		all_elements = redis.lrange(key, 0, length)
 		return all_elements
 				
 	#Return all elements from the deque as a JSON object
 	def elements_as_json(self):
 		key = self.key
 		size = self.size
-		all_elements = redis.lrange(key, 0, size)
-		all_elements_as_json = json.dumps(all_elements)
+		length = redis.llen(key)
+		all_elements = redis.lrange(key, 0, length)
 		return all_elements_as_json
 
 #The Queue
 class Queue(object):	
 	
 	#Key is required; specify a size to get a bounded queue
-	def __init__(self, key, size=100000000):
+	def __init__(self, key, size=None):
 		self.key = key
 		self.size = size		
 
@@ -119,23 +120,22 @@ class Queue(object):
 	#Return all elements from the queue as a Python list
 	def elements(self):
 		key = self.key
-		size = self.size
-		all_elements = redis.lrange(key, 0, size)
+		length = redis.llen(key)
+		all_elements = redis.lrange(key, 0, length)
 		return all_elements
 				
 	#Return all elements from the queue as a JSON object
 	def elements_as_json(self):
 		key = self.key
-		size = self.size
-		all_elements = redis.lrange(key, 0, size)
-		all_elements_as_json = json.dumps(all_elements)
+		length = redis.llen(key)
+		all_elements = redis.lrange(key, 0, length)
 		return all_elements_as_json
 
 #The Stack
 class Stack(object):
 
 	#Key is required; specify a size to get a bounded stack
-	def __init__(self, key, size=100000000):
+	def __init__(self, key, size=None):
 		self.key = key
 		self.size = size		
 
@@ -163,14 +163,14 @@ class Stack(object):
 	#Return all elements as a Python list
 	def elements(self):
 		key = self.key
-		size = self.size
-		all_elements = redis.lrange(key, 0, size)
+		length = redis.llen(key)
+		all_elements = redis.lrange(key, 0, length)
 		return all_elements
 					
 	#Return all elements as a JSON object
 	def elements_as_json(self):
 		key = self.key
-		size = self.size
-		all_elements = redis.lrange(key, 0, size)
+		length = redis.llen(key)
+		all_elements = redis.lrange(key, 0, length)
 		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
