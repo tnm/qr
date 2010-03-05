@@ -142,16 +142,16 @@ Imagine you have a Django view that handles blog comments. You have an arbitrary
 	#The recent comments are represented as a queue with 10 elements
 	most_recent_comments = Queue('recent_comments', 10)
 
-	#The view has receieved a new comment from a HTML form!
+	#A new comment arrives from a HTML form!
 	new_comment = 'No way man, La Forge was the best character!'
 
 	#Add the comment to your comment queue. If there are already 10 comments, the oldest one gets popped.
 	most_recent_comments.push(new_comment)
 
-	#Create a list of the most recent 10 comments.
+	#Create a list of the most recent 10 comments
 	comments_for_template = most_recent_comments.elements()
 
-	#Now send the comments back to your template. In the template, you could loop through it and you're done.
+	#Now send the comments back to your template -- in the template, you could loop through it and you're done
 
 
 	
