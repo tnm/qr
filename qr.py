@@ -86,6 +86,7 @@ class Deque(object):
 		size = self.size
 		length = redis.llen(key)
 		all_elements = redis.lrange(key, 0, length)
+		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
 
 #The Queue
@@ -129,6 +130,7 @@ class Queue(object):
 		key = self.key
 		length = redis.llen(key)
 		all_elements = redis.lrange(key, 0, length)
+		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
 
 #The Stack
