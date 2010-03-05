@@ -140,7 +140,7 @@ Also, A Real-World Example: Blog Comments
 Imagine you have a Django view that handles blog comments. You have an arbitrary number of blog comments. You want to return only the most recent ten blog comments to your template. Skipping to the relevant parts, it's as easy as this:
 
 	#The recent comments are represented as a queue with 10 elements
-	most_recent_comments = Qr('recent_comments', 10)
+	most_recent_comments = Queue('recent_comments', 10)
 
 	#The view has receieved a new comment from a HTML form!
 	new_comment = 'No way man, La Forge was the best character!'
