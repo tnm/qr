@@ -24,7 +24,7 @@ redis = redis.Redis()
 class Deque(object):
 
 	#Key is required; specify a size to get a bounded deque
-	def __init__(self, key, size=None):
+	def __init__(self, key, size=100000000):
 		self.key = key
 		self.size = size		
 
@@ -91,7 +91,7 @@ class Deque(object):
 class Queue(object):	
 	
 	#Key is required; specify a size to get a bounded queue
-	def __init__(self, key, size=None):
+	def __init__(self, key, size=100000000):
 		self.key = key
 		self.size = size		
 
@@ -135,7 +135,7 @@ class Queue(object):
 class Stack(object):
 
 	#Key is required; specify a size to get a bounded stack
-	def __init__(self, key, size=None):
+	def __init__(self, key, size=100000000):
 		self.key = key
 		self.size = size		
 
