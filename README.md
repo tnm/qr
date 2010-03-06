@@ -3,6 +3,8 @@ QR
 
 **QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes the work even easier in Python. QR works best for (and simplifies) the creation of **bounded** deques, queues, and stacks (herein, DQS's), with a defined size of elements. 
 
+Version 0.1 is designed for simple, single-writer operations. Version 0.2 will be committed soon and will allow for safety with multiple writers.
+
 
 Quick Setup
 ------------
@@ -37,7 +39,6 @@ For each DQS structure, you can create two varieties:
 
 * **Unbounded**: the DQS can grow to any size, and will not pop elements unless you explicitly ask it to.
 
-Consider a use case like this: you may have any number of comments on a blog post, but you only want to display the most recent 10. You can use a bounded queue, and pop the older comments as new ones come in. (We'll do that exact thing in an example at the end of this README).
 
 Create a DQS 
 -------------------------------------
@@ -128,33 +129,13 @@ For example:
 To-Do, Additions, More
 -----------------------
 
-Some more documentation will be added soon. I will likely implement a few more abstract data structures to make this something of a library. :)
+Some more documentation will be added soon. Version 0.2.0 will prevent race conditions with multiple writers.
 
 Feel free to fork! 
 
 Author: Ted Nyman | @tnm8
 
-Also, A Real-World Example: Blog Comments
------------------------------------
 
-Imagine you have a Django view that handles blog comments. You have an arbitrary number of blog comments. You want to return only the most recent ten blog comments to your template. Skipping to the relevant parts, it's as easy as this:
-
-	#The recent comments are represented as a queue with 10 elements
-	most_recent_comments = Queue('recent_comments', 10)
-
-	#A new comment arrives from a HTML form!
-	new_comment = 'No way man, La Forge was the best character!'
-
-	#Add the comment to your comment queue. If there are already 10 comments, the oldest one gets popped.
-	most_recent_comments.push(new_comment)
-
-	#Create a list of the most recent 10 comments
-	comments_for_template = most_recent_comments.elements()
-
-	#Now send the comments back to your template -- in the template, you could loop through it and you're done
-
-
-	
 MIT License
 ------------
 
