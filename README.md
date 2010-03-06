@@ -39,7 +39,6 @@ For each DQS structure, you can create two varieties:
 
 * **Unbounded**: the DQS can grow to any size, and will not pop elements unless you explicitly ask it to.
 
-Consider a use case like this: you may have any number of comments on a blog post, but you only want to display the most recent 10. You can use a bounded queue, and pop the older comments as new ones come in. (We'll do that exact thing in an example at the end of this README).
 
 Create a DQS 
 -------------------------------------
@@ -136,27 +135,7 @@ Feel free to fork!
 
 Author: Ted Nyman | @tnm8
 
-Also, A Real-World Example: Blog Comments
------------------------------------
 
-Imagine you have a Django view that handles blog comments. You have an arbitrary number of blog comments. You want to return only the most recent ten blog comments to your template. Skipping to the relevant parts, it's as easy as this:
-
-	#The recent comments are represented as a queue with 10 elements
-	most_recent_comments = Queue('recent_comments', 10)
-
-	#A new comment arrives from a HTML form!
-	new_comment = 'No way man, La Forge was the best character!'
-
-	#Add the comment to your comment queue. If there are already 10 comments, the oldest one gets popped.
-	most_recent_comments.push(new_comment)
-
-	#Create a list of the most recent 10 comments
-	comments_for_template = most_recent_comments.elements()
-
-	#Now send the comments back to your template -- in the template, you could loop through it and you're done
-
-
-	
 MIT License
 ------------
 
