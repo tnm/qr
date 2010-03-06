@@ -3,7 +3,7 @@ QR
 
 **QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes the work even easier in Python. QR works best for (and simplifies) the creation of **bounded** deques, queues, and stacks (herein, DQS's), with a defined size of elements. 
 
-Version 0.1 is designed for simple, single-writer operations. Version 0.2 will be committed soon and will allow for safety with multiple writers.
+Version 0.1 is designed for simple, single-writer operations. Version 0.2 will be committed soon and will allow for safety with multiple writers, as well as *peek* functionality.
 
 
 Quick Setup
