@@ -1,5 +1,5 @@
 """
-QR: Redis-Based Data Structures in Python
+QR | Redis-Based Data Structures in Python
 
          5 Mar 2010 | Returns work correctly for both bounded and unbounded
 	 4 Mar 2010 | Pop commands now return just the value
