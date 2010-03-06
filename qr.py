@@ -76,16 +76,13 @@ class Deque(object):
 	#Return all elements from the deque as a Python list
 	def elements(self):
 		key = self.key
-		length = redis.llen(key)
-		all_elements = redis.lrange(key, 0, length)
+		all_elements = redis.lrange(key, 0, -1)
 		return all_elements
 				
 	#Return all elements from the deque as a JSON object
 	def elements_as_json(self):
 		key = self.key
-		size = self.size
-		length = redis.llen(key)
-		all_elements = redis.lrange(key, 0, length)
+		all_elements = redis.lrange(key, 0, -1)
 		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
 
@@ -121,15 +118,13 @@ class Queue(object):
 	#Return all elements from the queue as a Python list
 	def elements(self):
 		key = self.key
-		length = redis.llen(key)
-		all_elements = redis.lrange(key, 0, length)
+		all_elements = redis.lrange(key, 0, -1)
 		return all_elements
 				
 	#Return all elements from the queue as a JSON object
 	def elements_as_json(self):
 		key = self.key
-		length = redis.llen(key)
-		all_elements = redis.lrange(key, 0, length)
+		all_elements = redis.lrange(key, 0, -1)
 		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
 
@@ -165,14 +160,12 @@ class Stack(object):
 	#Return all elements as a Python list
 	def elements(self):
 		key = self.key
-		length = redis.llen(key)
-		all_elements = redis.lrange(key, 0, length)
+		all_elements = redis.lrange(key, 0, -1)
 		return all_elements
 					
 	#Return all elements as a JSON object
 	def elements_as_json(self):
 		key = self.key
-		length = redis.llen(key)
-		all_elements = redis.lrange(key, 0, length)
+		all_elements = redis.lrange(key, 0, -1)
 		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
