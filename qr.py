@@ -31,8 +31,6 @@ class NullHandler(logging.Handler):
 #their own handlers if they are interested.
 log = logging.getLogger('qr')
 log.addHandler(NullHandler())
-
-
 	
 #The Deque
 class Deque(object):
