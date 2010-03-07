@@ -135,8 +135,8 @@ class Queue(object):
 		"""
 
 		self.key = key
-		self.auto = auto	
-		self.size = size		
+		self.size = size
+		self.auto = auto			
 	
 	def push(self, element):
 		"""Push an element"""
@@ -154,8 +154,7 @@ class Queue(object):
 
 			else:
 				log.debug('Element not pushed. Maximum size reached.')
- 
-		
+ 	
 		else:
 			push_it = redis.lpush(key, element)
 			log.debug('PUSHED: %s' % (element))
