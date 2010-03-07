@@ -118,13 +118,13 @@ class Queue(object):
 	#Return all elements from the queue as a Python list
 	def elements(self):
 		key = self.key
-		all_elements = redis.lrange(key, 0, -1)
+		all_elements = redis.lrange(key, 0, -1) or [ ]
 		return all_elements
 				
 	#Return all elements from the queue as a JSON object
 	def elements_as_json(self):
 		key = self.key
-		all_elements = redis.lrange(key, 0, -1)
+		all_elements = redis.lrange(key, 0, -1) or [ ]
 		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
 

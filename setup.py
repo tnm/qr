@@ -1,8 +1,32 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+import os
+import unittest
+from setuptools import setup, find_packages, Command
 
 version = '0.1.3'
+
+
+class TestCommand(Command):
+    '''A command for running an integration test suite.'''
+    description = 'run all test cases'
+    user_options = [ ]
+
+    def initialize_options(self): pass
+
+    def finalize_options(self): pass
+
+    def run(self):
+        files = [ ]
+        for f in os.listdir('test'):
+            base, ext = os.path.splitext(f)
+            if f != '__init__.py' and ext == '.py':
+                files.append('test.' + base)
+
+        tests = unittest.defaultTestLoader.loadTestsFromNames(files)
+        t = unittest.TextTestRunner()
+        t.run(tests)
+
 
 LONG_DESCRIPTION = '''
 
@@ -39,6 +63,7 @@ setup(
     py_modules=['qr'],
     include_package_data=True,
     zip_safe=False,
+	cmdclass = { 'test': TestCommand },
     classifiers=[
 	'Programming Language :: Python',
         'Intended Audience :: Developers',
