@@ -4,7 +4,7 @@ import os
 import unittest
 from setuptools import setup, find_packages, Command
 
-version = '0.1.3'
+version = '0.1.4'
 
 
 class TestCommand(Command):

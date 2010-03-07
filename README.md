@@ -1,7 +1,7 @@
 QR
 =====
 
-**QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes the work even easier in Python. QR works best for (and simplifies) the creation of (automatic popping) **bounded** deques, queues, and stacks (herein, DQS's), with a defined size of elements. 
+**QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes the work even easier in Python. QR works best for (and simplifies) the creation of **bounded** deques, queues, and stacks (herein, DQS's), with a defined size of elements. 
 
 Version 0.1 is designed for simple, single-writer operations. Version 0.2 will be committed soon and will allow for safety with multiple writers, as well as *peek* functionality.
 
@@ -35,9 +35,11 @@ A **stack**, or, as they say in German, a 'Stapelspeicher':
 
 For each DQS structure, you can create two varieties:
 
-* **Bounded**: once the DQS reaches a specified size of elements, it will pop an element.
+* **Bounded**: once the DQS reaches a specified size of elements, it will either:
+	* Prevent the addition of new elements (auto=False)
+	* Respond to push commands by popping the oldest element and pushing the newest element (auto=True)
 
-* **Unbounded**: the DQS can grow to any size, and will not pop elements unless you explicitly ask it to.
+* **Unbounded**: the DQS can grow to any size
 
 
 Create a DQS 
@@ -47,6 +49,10 @@ Create a DQS
 
 * A first-position **key** argument is required. It's the Redis key you want to be associated with the DQS.
 * A second-position **size** argument is optional. Without a size argument you get an unbounded DQS. With a specified size, you get a bounded DQS.
+* A third-position **auto** argument is optional. Set auto=True for automatic popping of oldest elements in a bounded queue; default is auto=False
+
+Note: For non-auto-pop bounded queues at their maximum size, the element you attempt to push will simply be ignored, and the lack of a successful push will be logged. This is to maintain flexibility 
+for implementations of the queue -- i.e. there is no built-in 'wait list', but you could implement one if you'd like.
 
 A Queue
 --------
@@ -54,9 +60,9 @@ A Queue
 Cool, let's create a version of The Beatles that, rather ahistorically, has just three members. Start your Redis server, and now:
 
 	>> from qr import Queue
-	>> bqueue = Queue('Beatles', 3)
+	>> bqueue = Queue('Beatles', 3, True)
 
-You are now the owner of a Queue object ('bqueue'), associated with the Redis key 'Beatles'. The Queue object has a specified size of 3 elements. Let's push some elements:
+You are now the owner of a Queue object ('bqueue'), associated with the Redis key 'Beatles'. The Queue object has a specified size of 3 elements, and auto-pop is set to True. Let's push some elements:
 
 	>> bqueue.push('Ringo')
 	>> bqueue.push('Paul')
@@ -64,7 +70,7 @@ You are now the owner of a Queue object ('bqueue'), associated with the Redis ke
 	>> bqueue.push('George')
 	'Ringo'
 
-Since the queue was **capped at three elements**, the addition of 'George' resulted in a pop of the first-in element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
+Since the queue was **capped at three elements**, and auto-pop is set to True, the addition of 'George' resulted in a pop of the first-in element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
 
 You can utilize **pop** at anytime. Any pop command will return the relevant element. To pop the oldest element, just do this:
 
@@ -74,7 +80,7 @@ You can utilize **pop** at anytime. Any pop command will return the relevant ele
 A Deque
 --------
 
-If you wanted a deque for the Rolling Stones, you'd just do:
+If you wanted a deque for the Rolling Stones that does not automatically pop elements, you'd just do:
 
 	>> from qr import Deque
 	>> stones_deque = Deque('Stones', 3)
@@ -104,23 +110,23 @@ Let's return some data from a DQS! Each class in QR includes two return-style me
 
 For example:
 
-	>>beatles_queue.elements()
+	>>bqueue.elements()
 	['John', 'George']
 
 	#Let's bring Ringo back into the band
-	>> beatles_queue.push('Ringo')
+	>> bqueue.push('Ringo')
 
 	#The elements method will return the updated list
-	>>beatles_queue.elements()
+	>>bqueue.elements()
 	['Ringo', 'John', 'George']
 
-	>>beatles_queue.elements_as_json()
+	>>bqueue.elements_as_json()
 	'['Ringo', 'John', 'George']'
 
 To-Do, Additions, More
 -----------------------
 
-Upcoming 0.1.4 version will add an option to turn on/off automatic popping with bounded queues. Version 0.2.0 will include classes designed for multi-writer environments.
+Version 0.2.0 will include classes designed for multi-writer environments.
 
 Feel free to fork! 
 
