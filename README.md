@@ -1,7 +1,7 @@
 QR
 =====
 
-**QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes the work even easier in Python. QR works best for (and simplifies) the creation of **bounded** deques, queues, and stacks (herein, DQS's), with a defined size of elements. 
+**QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes the work even easier in Python. QR works best for (and simplifies) the creation of (automatic popping) **bounded** deques, queues, and stacks (herein, DQS's), with a defined size of elements. 
 
 Version 0.1 is designed for simple, single-writer operations. Version 0.2 will be committed soon and will allow for safety with multiple writers, as well as *peek* functionality.
 
@@ -59,16 +59,9 @@ Cool, let's create a version of The Beatles that, rather ahistorically, has just
 You are now the owner of a Queue object ('bqueue'), associated with the Redis key 'Beatles'. The Queue object has a specified size of 3 elements. Let's push some elements:
 
 	>> bqueue.push('Ringo')
-	PUSHED: 'Ringo'
-
 	>> bqueue.push('Paul')
-	PUSHED: 'Paul'
-
 	>> bqueue.push('John')
-	PUSHED: 'John'
-
 	>> bqueue.push('George')
-	PUSHED: 'George' 
 	'Ringo'
 
 Since the queue was **capped at three elements**, the addition of 'George' resulted in a pop of the first-in element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
@@ -116,8 +109,6 @@ For example:
 
 	#Let's bring Ringo back into the band
 	>> beatles_queue.push('Ringo')
-	FOR KEY: 'Beatles'
-	PUSHED: 'Ringo'
 
 	#The elements method will return the updated list
 	>>beatles_queue.elements()
@@ -129,7 +120,7 @@ For example:
 To-Do, Additions, More
 -----------------------
 
-Some more documentation will be added soon. Version 0.2.0 will prevent race conditions with multiple writers.
+Upcoming 0.1.4 version will add an option to turn on/off automatic popping with bounded queues. Version 0.2.0 will include classes designed for multi-writer environments.
 
 Feel free to fork! 
 
