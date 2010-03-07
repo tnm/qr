@@ -37,7 +37,7 @@ For each DQS structure, you can create two varieties:
 
 * **Bounded**: once the DQS reaches a specified size of elements, it will either:
 	* Prevent the addition of new elements (auto=False)
-	* Respond to push commands by popping the oldest element and pushing the newest element (auto=True)
+	* Respond to push commands by popping the oldest element and pushing the newest element (auto=True) -- i.e. 'auto-pop' functionality.
 
 * **Unbounded**: the DQS can grow to any size
 
@@ -129,6 +129,8 @@ To-Do, Additions, More
 Version 0.2 will include classes designed for multi-writer environments.
 
 Feel free to fork! 
+
+Thanks to mafr for initial tests. 
 
 Author: Ted Nyman | @tnm8
 
