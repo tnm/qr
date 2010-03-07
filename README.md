@@ -126,7 +126,7 @@ For example:
 To-Do, Additions, More
 -----------------------
 
-Version 0.2.0 will include classes designed for multi-writer environments.
+Version 0.2 will include classes designed for multi-writer environments.
 
 Feel free to fork! 
 
