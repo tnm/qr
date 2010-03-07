@@ -4,7 +4,7 @@ import qr
 class Queue(unittest.TestCase):
     """Test a bounded queue, without automatic popping of elements"""
     def setUp(self):
-        self.q = qr.Queue(key='queue', size=3)
+        self.q = qr.Queue(key='testqueue3000', size=3)
         self.assertEquals(len(self.q.elements()), 0)
 
     def test_roundtrip(self):
@@ -45,7 +45,7 @@ class Queue(unittest.TestCase):
 class AutoQueue(unittest.TestCase):
     """Test a bounded queue, with automatic popping of elements"""
     def setUp(self):
-        self.aq = qr.Queue(key='autoqueue', size=3, auto=True)
+       	self.aq = qr.Queue(key='autoqueue3000', size=3, auto=True)
         self.assertEquals(len(self.aq.elements()), 0)
 
     def test_roundtrip(self):
@@ -82,5 +82,9 @@ class AutoQueue(unittest.TestCase):
         self.assertEquals(aq.pop(), 'd')
         self.assertEquals(aq.pop(), 'e')
         self.assertEquals(len(aq.elements()), 0)
+
+if __name__ == '__main__':
+    unittest.main()
+
 	
 
