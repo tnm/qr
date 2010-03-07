@@ -183,7 +183,7 @@ class Queue(object):
 
 
 class Stack(object):
-	"""Implements a FIFO stack.""" 
+	"""Implements a LIFO stack.""" 
 
 	def __init__(self, key, size=None, auto=False):
 		"""
