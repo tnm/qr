@@ -12,6 +12,7 @@ __version__ = '0.1.3'
 __license__ = 'MIT'
 
 import redis
+import logging
 
 try:
     import json
@@ -20,6 +21,18 @@ except ImportError:
 
 #The redis-py object -- modify/remove this to match with your namespacing
 redis = redis.Redis()
+
+#A logging handler that discards all logging records
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+
+#Disable logging to prevent warnings from the logging module. Clients can add
+#their own handlers if they are interested.
+log = logging.getLogger('qr')
+log.addHandler(NullHandler())
+
+
 	
 #The Deque
 class Deque(object):
@@ -37,12 +50,12 @@ class Deque(object):
 		if length == self.size:
 			popped = redis.rpop(key)
 			push_it = redis.lpush(key, element)
-			print 'PUSHED: %s' % (element)
+			log.debug('PUSHED: %s' % (element))
 			return popped 
 		
 		else:
 			push_it = redis.lpush(key, element)
-			print 'PUSHED: %s' % (element)
+			log.debug('PUSHED: %s' % (element))
 		
 	#Push to Front
 	def pushfront(self, element):
@@ -52,12 +65,12 @@ class Deque(object):
 		if length == self.size:
 			popped = redis.lpop(key)
 			push_it = redis.rpush(key, element)
-			print 'PUSHED: %s' % (element)
+			log.debug('PUSHED: %s' % (element))
 			return popped 
 		
 		else:
 			push_it = redis.rpush(key, element)
-			print 'PUSHED: %s' % (element)
+			log.debug('PUSHED: %s' % (element))
 
 	#Pop Front Element
 	def popfront(self):
@@ -102,12 +115,12 @@ class Queue(object):
 		if length == self.size:
 			popped = redis.rpop(key)
 			push_it = redis.lpush(key, element)
-			print 'PUSHED: %s' % (element)
+			log.debug('PUSHED: %s' % (element))
 			return popped 
 		
 		else:
 			push_it = redis.lpush(key, element)
-			print 'PUSHED: %s' % (element)
+			log.debug('PUSHED: %s' % (element))
 		
 	#Pop 
 	def pop(self):
@@ -144,12 +157,12 @@ class Stack(object):
 		if length == self.size:
 			popped = redis.lpop(key)
 			push_it = redis.lpush(key, element)
-			print 'PUSHED: %s' % (element)
+			log.debug('PUSHED: %s' % (element))
 			return popped 
 		
 		else:
 			push_it = redis.lpush(key, element)
-			print 'PUSHED: %s' % (element)
+			log.debug('PUSHED: %s' % (element))
 		
 	#Pop 
 	def pop(self):
