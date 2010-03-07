@@ -46,7 +46,7 @@ class AutoQueue(unittest.TestCase):
     """Test a bounded queue, with automatic popping of elements"""
     def setUp(self):
         self.aq = qr.Queue(key='autoqueue', size=3, auto=True)
-        self.assertEquals(len(self.q.elements()), 0)
+        self.assertEquals(len(self.aq.elements()), 0)
 
     def test_roundtrip(self):
         aq = self.aq
