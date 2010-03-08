@@ -124,7 +124,6 @@ class Deque(object):
 		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
 
-
 class Queue(object):	
 	"""Implements a FILO queue"""
 
@@ -181,7 +180,6 @@ class Queue(object):
 		all_elements_as_json = json.dumps(all_elements)
 		return all_elements_as_json
 
-
 class Stack(object):
 	"""Implements a LIFO stack""" 
 
@@ -213,7 +211,6 @@ class Stack(object):
 			else:
 				log.debug('Element not pushed. Maximum size reached.')
 
-				
 		else:
 			push_it = redis.lpush(key, element)
 			log.debug('PUSHED: %s' % (element))
