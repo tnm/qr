@@ -39,7 +39,7 @@ log.addHandler(NullHandler())
 
 class Deque(object):
 	"""
-	Implements a FILO double-ended queue. 
+	Implements a double-ended queue 
 	"""
 
 	def __init__(self, key, size=None, auto=False):
@@ -126,7 +126,7 @@ class Deque(object):
 
 
 class Queue(object):	
-	"""Implements a FILO queue."""
+	"""Implements a FILO queue"""
 
 	def __init__(self, key, size=None, auto=False):
 		"""
@@ -183,7 +183,7 @@ class Queue(object):
 
 
 class Stack(object):
-	"""Implements a LIFO stack.""" 
+	"""Implements a LIFO stack""" 
 
 	def __init__(self, key, size=None, auto=False):
 		"""
