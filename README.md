@@ -1,10 +1,9 @@
 QR
 =====
 
-**QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes the work even easier in Python. QR works best for (and simplifies) the creation of **bounded** deques, queues, and stacks (herein, DQS's), with a defined size of elements. 
+**QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes it even easier to work with the structures in Python. QR works best for (and simplifies) the creation of **bounded** deques, queues, and stacks (herein, DQS's), with a defined size of elements. 
 
-Version 0.1 is designed for simple, single-writer operations. Version 0.2 will be committed soon and will allow for safety with multiple writers, as well as *peek* functionality.
-
+Version 0.1 is designed for single-writer operations. Version 0.2 will allow for safety with multiple writers.
 
 Quick Setup
 ------------
@@ -71,7 +70,7 @@ You are now the owner of a Queue object ('bqueue'), associated with the Redis ke
 
 Since the queue was **capped at three elements**, and auto-pop is set to True, the addition of 'George' resulted in a pop of the first-in element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
 
-You can utilize **pop** at anytime. Any pop command will return the relevant element. To pop the oldest element, just do this:
+You can utilize **pop** at anytime. To pop the oldest element of a queue, just do this:
 
 	>>bqueue.pop()
 	'Paul'
@@ -84,7 +83,7 @@ If you wanted a deque for the Rolling Stones that does not automatically pop ele
 	>> from qr import Deque
 	>> stones_deque = Deque('Stones', 3)
 
-Instead of **push** and **pop**, you can use **pushfront**, **popfront**, **pushback**, and **popback** methods.
+Deque methods include **pushfront**, **popfront**, **pushback**, and **popback** methods.
 
 
 A Stack
