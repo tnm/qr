@@ -24,215 +24,196 @@ except ImportError:
 redis = redis.Redis()
 
 class NullHandler(logging.Handler):
-	"""A logging handler that discards all logging records"""
+    """A logging handler that discards all logging records"""
 
-	def emit(self, record):
-        	pass
+    def emit(self, record):
+        pass
 
 #Disable logging to prevent warnings from the logging module. Clients can add
 #their own handlers if they are interested.
 log = logging.getLogger('qr')
 log.addHandler(NullHandler())
 	
-
 #The Data Structures
-
 class Deque(object):
-	"""
-	Implements a double-ended queue 
-	"""
+    """
+    Implements a double-ended queue 
+    """
 
-	def __init__(self, key, size=None, auto=False):
-		"""
-		Key is required. Specify a size to get a bounded deque. 
-		Specify auto=True for automatic popping of elements in
-		a bounded deque.
-		"""
+    def __init__(self, key, size=None, auto=False):
+        """
+        Key is required. Specify a size to get a bounded deque. 
+        Specify auto=True for automatic popping of elements in
+        a bounded deque.
+        """
+        self.key = key
+        self.size = size		
+        self.auto = auto		
 
-		self.key = key
-		self.size = size		
-		self.auto = auto		
+    def pushback(self, element):
+        """Push an element to the back"""
+        key = self.key
+        auto = self.auto
+        length = redis.llen(key)
 
-	def pushback(self, element):
-		"""Push an element to the back"""
+        if length == self.size:
+            if auto == True:
+                popped = redis.rpop(key)
+                push_it = redis.lpush(key, element)
+                log.debug('PUSHED: %s' % (element))
+                return popped
+             else:
+                log.debug('Element not pushed. Maximum size reached.')
 
-		key = self.key
-		auto = self.auto
-		length = redis.llen(key)
-
-		if length == self.size:
-			if auto == True:
-				popped = redis.rpop(key)
-				push_it = redis.lpush(key, element)
-				log.debug('PUSHED: %s' % (element))
-				return popped
- 
-			else:
-				log.debug('Element not pushed. Maximum size reached.')
-
-		else:
-			push_it = redis.lpush(key, element)
-			log.debug('PUSHED: %s' % (element))
+        else:
+            push_it = redis.lpush(key, element)
+            log.debug('PUSHED: %s' % (element))
 		
-	def pushfront(self, element):
-		"""Push an element to the front"""
-	
-		key = self.key
-		auto = self.auto
-		length = redis.llen(key)
+        def pushfront(self, element):
+        """Push an element to the front"""
+        key = self.key
+        auto = self.auto
+        length = redis.llen(key)
 
-		if length == self.size:
-			if auto == True: 
-				popped = redis.lpop(key)
-				push_it = redis.rpush(key, element)
-				log.debug('PUSHED: %s' % (element))
-				return popped 
-
-			else:
-				log.debug('Element not pushed. Maximum size reached.')
+        if length == self.size:
+            if auto == True: 
+                popped = redis.lpop(key)
+                push_it = redis.rpush(key, element)
+                log.debug('PUSHED: %s' % (element))
+                return popped 
+            else:
+                log.debug('Element not pushed. Maximum size reached.')
 		
-		else:
-			push_it = redis.rpush(key, element)
-			log.debug('PUSHED: %s' % (element))
+        else:
+            push_it = redis.rpush(key, element)
+            log.debug('PUSHED: %s' % (element))
 
-	def popfront(self):
-		"""Pop an element from the front"""
+        def popfront(self):
+        """Pop an element from the front"""
+        key = self.key
+        popped = redis.rpop(key)
+        return popped 
 
-		key = self.key
-		popped = redis.rpop(key)
-		return popped 
+    def popback(self):
+        """Pop an element from the back"""
+        key = self.key
+        popped = redis.lpop(key)
+        return popped 
 
-	def popback(self):
-		"""Pop an element from the back"""
-
-		key = self.key
-		popped = redis.lpop(key)
-		return popped 
-
-	def elements(self):
-		"""Return all elements as a Python list"""
-
-		key = self.key
-		all_elements = redis.lrange(key, 0, -1)
-		return all_elements
+    def elements(self):
+        """Return all elements as a Python list"""
+	key = self.key
+        all_elements = redis.lrange(key, 0, -1)
+        return all_elements
 				
-	def elements_as_json(self):
-		"""Return all elements as a JSON object"""
-		
-		key = self.key
-		all_elements = redis.lrange(key, 0, -1)
-		all_elements_as_json = json.dumps(all_elements)
-		return all_elements_as_json
+    def elements_as_json(self):
+        """Return all elements as a JSON object"""
+        key = self.key
+        all_elements = redis.lrange(key, 0, -1)
+        all_elements_as_json = json.dumps(all_elements)
+        return all_elements_as_json
 
 class Queue(object):	
-	"""Implements a FILO queue"""
+    """Implements a FILO queue"""
 
-	def __init__(self, key, size=None, auto=False):
-		"""
-		Key is required. Specify a size to get a bounded queue. Specify 
-		auto=True for automatic popping of elements in a bounded queue.
-		"""
-
-		self.key = key
-		self.size = size
-		self.auto = auto			
+    def __init__(self, key, size=None, auto=False):
+        """
+        Key is required. Specify a size to get a bounded queue. Specify 
+        auto=True for automatic popping of elements in a bounded queue.
+        """
+        self.key = key
+        self.size = size   
+        self.auto = auto			
 	
-	def push(self, element):
-		"""Push an element"""
-	
-		key = self.key
-		length = redis.llen(key)
-		auto = self.auto
+    def push(self, element):
+        """Push an element"""
+        key = self.key
+        length = redis.llen(key)
+        auto = self.auto
 
-		if length == self.size:
-			if auto == True:
-				popped = redis.rpop(key)
-				push_it = redis.lpush(key, element)
-				log.debug('PUSHED: %s' % (element))
-				return popped
+        if length == self.size:
+            
+            if auto == True:
+                popped = redis.rpop(key)
+                push_it = redis.lpush(key, element)
+                log.debug('PUSHED: %s' % (element))
+                return popped
 
-			else:
-				log.debug('Element not pushed. Maximum size reached.')
+            else:
+                log.debug('Element not pushed. Maximum size reached.')
  	
-		else:
-			push_it = redis.lpush(key, element)
-			log.debug('PUSHED: %s' % (element))
+        else:
+            push_it = redis.lpush(key, element)
+            log.debug('PUSHED: %s' % (element))
 		
-	def pop(self):
-		"""Pop an element"""
+    def pop(self):
+        """Pop an element"""
+        key = self.key
+        popped = redis.rpop(key)
+        return popped 	
 
-		key = self.key
-		popped = redis.rpop(key)
-		return popped 	
-
-	def elements(self):
-		"""Return all elements as a Python list"""
-
-		key = self.key
-		all_elements = redis.lrange(key, 0, -1) or [ ]
-		return all_elements
+    def elements(self):
+        """Return all elements as a Python list"""
+        key = self.key
+        all_elements = redis.lrange(key, 0, -1) or [ ]
+        return all_elements
 				
-	def elements_as_json(self):
-		"""Return all elements as a JSON object"""
+    def elements_as_json(self):
+        """Return all elements as a JSON object"""
 	
-		key = self.key
-		all_elements = redis.lrange(key, 0, -1) or [ ]
-		all_elements_as_json = json.dumps(all_elements)
-		return all_elements_as_json
+        key = self.key
+        all_elements = redis.lrange(key, 0, -1) or [ ]
+        all_elements_as_json = json.dumps(all_elements)
+        return all_elements_as_json
 
 class Stack(object):
-	"""Implements a LIFO stack""" 
+    """Implements a LIFO stack""" 
 
-	def __init__(self, key, size=None, auto=False):
-		"""
-		Key is required. Specify a size to get a bounded stack. 
-		Specify auto=True for automatic popping of elements 
-		in a bounded stack.
-		"""
+    def __init__(self, key, size=None, auto=False):
+        """
+        Key is required. Specify a size to get a bounded stack. 
+        Specify auto=True for automatic popping of elements 
+        in a bounded stack.
+        """
+        self.key = key
+        self.size = size		
+        self.auto = auto	
+
+    def push(self, element):
+        """Push an element"""
+        key = self.key
+        auto = self.auto
+        length = redis.llen(key)
+
+        if length == self.size:
+            if auto == True:
+                popped = redis.lpop(key)
+                push_it = redis.lpush(key, element)
+                log.debug('PUSHED: %s' % (element))
+                return popped 
 		
-		self.key = key
-		self.size = size		
-		self.auto = auto	
+                else:
+                    log.debug('Element not pushed. Maximum size reached.')
 
-	def push(self, element):
-		"""Push an element"""
-
-		key = self.key
-		auto = self.auto
-		length = redis.llen(key)
-
-		if length == self.size:
-			if auto == True:
-				popped = redis.lpop(key)
-				push_it = redis.lpush(key, element)
-				log.debug('PUSHED: %s' % (element))
-				return popped 
-		
-			else:
-				log.debug('Element not pushed. Maximum size reached.')
-
-		else:
-			push_it = redis.lpush(key, element)
-			log.debug('PUSHED: %s' % (element))
+    else:
+        push_it = redis.lpush(key, element)
+        log.debug('PUSHED: %s' % (element))
 		 
-	def pop(self):
-		"""Pop an element"""
-
-		key = self.key
-		popped = redis.lpop(key)
-		return popped 
+    def pop(self):
+        """Pop an element"""
+        key = self.key
+        popped = redis.lpop(key)
+        return popped 
 	
-	def elements(self):
-		"""Return all elements as Python list"""
+    def elements(self):
+        """Return all elements as Python list"""
+        key = self.key
+        all_elements = redis.lrange(key, 0, -1)   
+        return all_elements
 
-		key = self.key
-		all_elements = redis.lrange(key, 0, -1)
-		return all_elements
-
-	def elements_as_json(self):
-		"""Return all elements as JSON object"""
-
-		key = self.key
-		all_elements = redis.lrange(key, 0, -1)
-		all_elements_as_json = json.dumps(all_elements)
-		return all_elements_as_json
+    def elements_as_json(self):
+        """Return all elements as JSON object"""
+        key = self.key
+        all_elements = redis.lrange(key, 0, -1)
+        all_elements_as_json = json.dumps(all_elements)
+        return all_elements_as_json
