@@ -192,8 +192,8 @@ class Stack(object):
                 log.debug('PUSHED: %s' % (element))
                 return popped 
 		
-                else:
-                    log.debug('Element not pushed. Maximum size reached.')
+             else:
+                 log.debug('Element not pushed. Maximum size reached.')
 
     else:
         push_it = redis.lpush(key, element)
