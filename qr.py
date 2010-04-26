@@ -79,7 +79,7 @@ class Deque(object):
         return all_elements_as_json
 
 class Queue(object):	
-    """Implements a FILO queue"""
+    """Implements a FIFO queue"""
 
     def __init__(self, key):
         self.key = key
