@@ -39,8 +39,8 @@ Create a QCDS
 
 **qr.py** includes four little classes: **Queue**, **CappedCollection**, **Deque**, and **Stack**. To create a new QCDS, just create an instance as follows:
 
-* A first-position **key** argument is required for all objects. It's the Redis **key** you want to be associated with the DQCS.
-* A second-position **size** argument is required for **Capped Collections**. That's how big you want to let the collection get.
+* A first-position **key** argument is required for all objects. It's the Redis **key** you want to be associated with the QCDS.
+* A second-position **size** argument is required for **CappedCollection**. That's how big you want to let the collection get.
 
 A Queue
 --------
@@ -80,16 +80,6 @@ For example:
 
 	>> bqueue.elements_as_json()
 	'['Ringo', 'George', 'Paul', 'John']'
-
-Unfortunately, George Martin doesn't like Pete Best, so it's time to pop him. Since Pete was first in, and this is a queue, after all, we just do this:
-
-    >> bqueue.pop()
-    'Pete'
-
-And, of course, we know who comes in next.
-
-    >> bqueue.push('Ringo')
-
 
 A Capped Collection
 --------------------
