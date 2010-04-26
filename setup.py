@@ -14,13 +14,22 @@ Full documentation (with example code) is at http://github.com/tnm/qr
 QR
 =====
 
-**QR** helps you create and work with **queue, capped collection (bounded queue), deque, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes it even easier to work with the structures in Python.
+**QR** helps you create and work with **queue, capped collection (bounded queue), 
+deque, and stack** data structures for **Redis**. Redis is well-suited for 
+implementations of these abstract data structures, and QR makes it even easier to 
+work with the structures in Python.
 
 Quick Setup
 ------------
-You'll need [Redis](http://github.com/antirez/redis/ "Redis") itself (QR makes use of MULTI/EXEC, so you'll need the Git edge version), and the current Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Put **qr.py** in your PYTHONPATH and you're all set.
+You'll need [Redis](http://github.com/antirez/redis/ "Redis") itself (QR makes use 
+of MULTI/EXEC, so you'll need the Git edge version), and the current Python interface
+for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Put **qr.py**
+in your PYTHONPATH and you're all set.
 
-**qr.py** also creates an instance of the redis-py interface object. You may already have instantiated the object in your code, so you'll want to ensure consistent namespacing. You can remove this line of code, modify the namespacing, or adjust your existing namespacing -- whatever works best for you.
+**qr.py** also creates an instance of the redis-py interface object. You may already
+have instantiated the object in your code, so you'll want to ensure consistent namespacing.
+You can remove this line of code, modify the namespacing, or adjust your existing namespacing --
+whatever works best for you.
 
 
 '''
