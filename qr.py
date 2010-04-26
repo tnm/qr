@@ -124,7 +124,7 @@ class CappedCollection(object):
         pipe = pipe.lpush(key, element).ltrim(key, 0, size-1) #ltrim is zero-indexed 
         pipe.execute()
 
-    def pop(self, element):
+    def pop(self):
         key = self.key
         size = self.size
         popped = redis.rpop(key)

@@ -5,10 +5,9 @@ import redis
 r = redis.Redis()
 
 class Queue(unittest.TestCase):
-    """Test a bounded queue, without automatic popping of elements"""
     def setUp(self):
 	r.delete('qrtestqueue')
-        self.q = qr.Queue(key='qrtestqueue', size=3)
+        self.q = qr.Queue(key='qrtestqueue')
         self.assertEquals(len(self.q.elements()), 0)
 
     def test_roundtrip(self):
@@ -32,25 +31,10 @@ class Queue(unittest.TestCase):
         q.push('bar')
         self.assertEquals(q.pop(), 'bar')
 
-    def test_limit(self):
-        q = self.q
-        q.push('a')
-        q.push('b')
-        q.push('c')
-        self.assertEquals(len(q.elements()), 3)
-        q.push('d')
-        q.push('e')
-        self.assertEquals(len(q.elements()), 3)
-        self.assertEquals(q.pop(), 'a')
-        self.assertEquals(q.pop(), 'b')
-        self.assertEquals(q.pop(), 'c')
-        self.assertEquals(len(q.elements()), 0)
-
-class AutoQueue(unittest.TestCase):
-    """Test a bounded queue, with automatic popping of elements"""
+class CappedCollection(unittest.TestCase):
     def setUp(self):
-	r.delete('qrtestautoqueue')
-       	self.aq = qr.Queue(key='qrtestautoqueue', size=3, auto=True)
+	r.delete('qrtestcc')
+       	self.aq = qr.CappedCollection(key='qrtestcc', size=3)
         self.assertEquals(len(self.aq.elements()), 0)
 
     def test_roundtrip(self):
@@ -88,12 +72,10 @@ class AutoQueue(unittest.TestCase):
         self.assertEquals(aq.pop(), 'e')
         self.assertEquals(len(aq.elements()), 0)
 
-
 class Stack(unittest.TestCase):
-    """Test a bounded stack, without automatic popping of elements"""
     def setUp(self):
 	r.delete('qrteststack')
-        self.stack = qr.Stack(key='qrteststack', size=3)
+        self.stack = qr.Stack(key='qrteststack')
 
     def test_roundtrip(self):
         stack = self.stack
@@ -115,21 +97,6 @@ class Stack(unittest.TestCase):
         self.assertEquals(stack.pop(), 'foo')
         stack.push('bar')
         self.assertEquals(stack.pop(), 'bar')
-
-    def test_limit(self):
-        stack = self.stack
-        stack.push('a')
-        stack.push('b')
-        stack.push('c')
-        self.assertEquals(len(stack.elements()), 3)
-        stack.push('d')
-        stack.push('e')
-        self.assertEquals(len(stack.elements()), 3)
-        self.assertEquals(stack.pop(), 'c')
-        self.assertEquals(stack.pop(), 'b')
-        self.assertEquals(stack.pop(), 'a')
-        self.assertEquals(len(stack.elements()), 0)
-
 
 if __name__ == '__main__':
     unittest.main()
