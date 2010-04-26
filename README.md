@@ -63,11 +63,11 @@ just do this:
     >> bqueue.pop()
     'Pete'
 
-And, of course, we know we comes in next.
+And, of course, we know who joins the band next.
 
     >> bqueue.push('Ringo')
 
-We can return the elements from the queue, too. In fact, each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
+We can get back (no pun intended) the elements from the queue, too. In fact, each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
 
 * Call **elements**, and you'll get back a Python list. 
 
