@@ -1,13 +1,11 @@
 QR
 =====
 
-**QR** helps you create and work with **deque, queue, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes it even easier to work with the structures in Python. QR works best for (and simplifies) the creation of **bounded** deques, queues, and stacks (herein, DQS's), with a defined size of elements. 
-
-Version 0.1 is designed for single-writer operations. Version 0.2 will allow for safety with multiple writers.
+**QR** helps you create and work with **queue, capped collection (bounded queue), deque, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes it even easier to work with the structures in Python.
 
 Quick Setup
 ------------
-You'll need [Redis](http://code.google.com/p/redis/ "Redis") itself, and the current Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Put **qr.py** in your PYTHONPATH and you're all set.
+You'll need [Redis](http://github.com/antirez/redis/ "Redis") itself (QR makes use of MULTI/EXEC, so you'll need the Git edge version), and the current Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Put **qr.py** in your PYTHONPATH and you're all set.
 
 **qr.py** also creates an instance of the redis-py interface object. You may already have instantiated the object in your code, so you'll want to ensure consistent namespacing. You can remove this line of code, modify the namespacing, or adjust your existing namespacing -- whatever works best for you.
 
@@ -15,92 +13,61 @@ You'll need [Redis](http://code.google.com/p/redis/ "Redis") itself, and the cur
 QR as Abstraction
 ------------------
 
-You probably know this already, but here's the 20-second overview of these three data structures.
-
-A **deque**, or double-ended queue:
-
-* You can push values to the front *or* back of a deque, and pop elements from the front *or* back of the deque. 
+You probably know this already, but here's the 20-second overview of these four lovely data structures.
 
 A **queue**:
 
 * You push elements to the back of the queue and pop elements from the front.
 * With respect to the elements, it's first in, first out (FIFO).
 
+A **capped collection**:
+
+* Another name for (what is essentially) a bounded queue.
+* You push elements to the back, and once a maximum collection size is reached, the oldest element(s) is trimmed.
+
+A **deque**, or double-ended queue:
+
+* You can push values to the front *or* back of a deque, and pop elements from the front *or* back of the deque. 
+
 A **stack**, or, as they say in German, a 'Stapelspeicher':
 
 * You can push elements to the back of the stack and pop elements from the back of the stack.
 * It's last in, first out (LIFO).
 
-For each DQS structure, you can create two varieties:
-
-* **Bounded**: once the DQS reaches a specified size of elements, it will either:
-	* Prevent the addition of new elements (auto=False)
-	* Respond to push commands by popping the oldest element and pushing the newest element (auto=True) -- i.e. 'auto-pop' functionality.
-
-* **Unbounded**: the DQS can grow to any size
-
-
-Create a DQS 
+Create a QCDS 
 -------------------------------------
 
-**qr.py** includes three classes: **Deque**, **Queue**, and **Stack**. To create a new DQS, just create an instance as follows:
+**qr.py** includes four little classes: **Queue**, **CappedCollection**, **Deque**, and **Stack**. To create a new QCDS, just create an instance as follows:
 
-* A first-position **key** argument is required. It's the Redis key you want to be associated with the DQS.
-* A second-position **size** argument is optional. Without a size argument you get an unbounded DQS. With a specified size, you get a bounded DQS.
-* A third-position **auto** argument is optional. Set auto=True for automatic popping of oldest elements in a bounded queue; default is auto=False
-
-Note: For non-auto-pop bounded queues at their maximum size, the element you attempt to push will simply be ignored, and the lack of a successful push will be logged. This is to maintain flexibility 
-for implementations of the queue -- i.e. there is no built-in 'wait list', but you could implement one if you'd like.
+* A first-position **key** argument is required for all objects. It's the Redis **key** you want to be associated with the DQCS.
+* A second-position **size** argument is required for **Capped Collections**. That's how big you want to let the collection get.
 
 A Queue
 --------
 
-Cool, let's create a version of The Beatles that, rather ahistorically, has just three members. Start your Redis server, and now:
+Cool, let's create a Beatles queue, circa 1962. 
 
 	>> from qr import Queue
-	>> bqueue = Queue('Beatles', 3, True)
+	>> bqueue = Queue('Beatles')
 
-You are now the owner of a Queue object ('bqueue'), associated with the Redis key 'Beatles'. The Queue object has a specified size of 3 elements, and auto-pop is set to True. Let's push some elements:
+You are now the owner of a Queue object (`bqueue`), associated with the Redis key 'Beatles'. 
 
-	>> bqueue.push('Ringo')
-	>> bqueue.push('Paul')
+    >> bqueue.push('Pete')
 	>> bqueue.push('John')
-	>> bqueue.push('George')
-	'Ringo'
+    >> bqueue.push('Paul')
+    >> bqueue.push('George')
 
-Since the queue was **capped at three elements**, and auto-pop is set to True, the addition of 'George' resulted in a pop of the first-in element (in this case, 'Ringo'). Sorry, Ringo, you're out of the band.
+Unfortunately, George Martin doesn't like Pete Best, so it's time to pop him. Since Pete was first in, and this is a queue, after all, we 
+just do this:
 
-You can utilize **pop** at anytime. To pop the oldest element of a queue, just do this:
+    >> bqueue.pop()
+    'Pete'
 
-	>>bqueue.pop()
-	'Paul'
+And, of course, we know we comes in next.
 
-A Deque
---------
+    >> bqueue.push('Ringo')
 
-If you wanted a deque for the Rolling Stones that does not automatically pop elements, you'd just do:
-
-	>> from qr import Deque
-	>> stones_deque = Deque('Stones', 3)
-
-Deque methods include **pushfront**, **popfront**, **pushback**, and **popback** methods.
-
-
-A Stack
---------
-
-The Kinks stack is as easy as:
-
-	>> from qr import Stack
-	>> kinks_stack = Stack('Kinks', 3)
-
-The stack has the same methods as the queue.
-
-
-Return the Values
------------------
-
-Let's return some data from a DQS! Each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
+We can return the elements from the queue, too. In fact, each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
 
 * Call **elements**, and you'll get back a Python list. 
 
@@ -108,27 +75,84 @@ Let's return some data from a DQS! Each class in QR includes two return-style me
 
 For example:
 
-	>>bqueue.elements()
-	['John', 'George']
+	>> bqueue.elements()
+	['Ringo', 'George', 'Paul', 'John']
 
-	#Let's bring Ringo back into the band
-	>> bqueue.push('Ringo')
+	>> bqueue.elements_as_json()
+	'['Ringo', 'George', 'Paul', 'John']'
 
-	#The elements method will return the updated list
-	>>bqueue.elements()
-	['Ringo', 'John', 'George']
+Unfortunately, George Martin doesn't like Pete Best, so it's time to pop him. Since Pete was first in, and this is a queue, after all, we just do this:
 
-	>>bqueue.elements_as_json()
-	'['Ringo', 'John', 'George']'
+    >> bqueue.pop()
+    'Pete'
 
-To-Do, Additions, More
+And, of course, we know who comes in next.
+
+    >> bqueue.push('Ringo')
+
+
+A Capped Collection
+--------------------
+
+I don't know if you've heard, but Donald Knuth will be joining Radiohead soon. They need an organ player. Amazing, I know. Anyway, Radiohead has a max of five members, so someone is going to have to get kicked out of the band. Let's demonstrate this with a Capped Collection.
+
+	>> from qr import CappedCollection
+	>> radiohead_cc = Queue('Radiohead', 5)
+
+    >> radiohead_cc.push('Ed')
+    >> radiohead_cc.push('Colin')
+    >> radiohead_cc.push('Thom')
+    >> radiohead_cc.push('Jonny')
+    >> radiohead_cc.push('Phil')
+
+    >> radiohead_cc.elements()
+	['Phil', 'Jonny', 'Thom', 'Colin', 'Ed']
+
+Now it's time for Donald to join the group.
+
+    >> radiohead_cc.push('Donald')
+
+And our new Radiohead is :
+
+    >> radiohead_cc.elements()
+	['Donald', 'Phil', 'Jonny', 'Thom', 'Colin']
+
+
+A Deque
+--------
+
+If you wanted a deque for the Rolling Stones:
+
+	>> from qr import Deque
+	>> stones_deque = Deque('Stones')
+
+The deque, of course, has different methods:
+
+* pushfront
+* pushback
+* popfront
+* popback
+    
+
+A Stack
+--------
+
+The Kinks stack is as easy as:
+
+	>> from qr import Stack
+	>> kinks_stack = Stack('Kinks')
+
+The stack has the same methods as the queue.
+
+
+
+
+Additions, More
 -----------------------
-
-Version 0.2 will include classes designed for multi-writer environments.
 
 Feel free to fork! 
 
-Thanks to mafr for initial tests. 
+Thanks to mafr for some initial tests. 
 
 Author: Ted Nyman | @tnm8
 
