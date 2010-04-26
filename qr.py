@@ -1,12 +1,13 @@
 """
 QR | Redis-Based Data Structures in Python
 
-	26 Apr 2010 | Major API change; capped collections, remove autopop (0.2.0)
+    26 Apr 2010 | Major API change; capped collections, remove autopop (0.2.0)
      7 Mar 2010 | Auto popping for bounded queues is optional (0.1.4)
      5 Mar 2010 | Returns work for both bounded and unbounded (0.1.3)
-	 4 Mar 2010 | Pop commands now return just the value
-	24 Feb 2010 | QR now has deque and stack data structures (0.1.2)
-	22 Feb 2010 | First public release of QR (0.1.1)
+     4 Mar 2010 | Pop commands now return just the value
+    24 Feb 2010 | QR now has deque and stack data structures (0.1.2)
+    22 Feb 2010 | First public release of QR (0.1.1)
+
 """
 
 __author__ = 'Ted Nyman'
