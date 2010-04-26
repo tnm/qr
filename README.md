@@ -87,7 +87,7 @@ A Capped Collection
 I don't know if you've heard, but Donald Knuth will be joining Radiohead soon. They need an organ player. Amazing, I know. Anyway, Radiohead has a max of five members, so someone is going to have to get kicked out of the band. Let's demonstrate this with a Capped Collection.
 
 	>> from qr import CappedCollection
-	>> radiohead_cc = Queue('Radiohead', 5)
+	>> radiohead_cc = CappedCollection('Radiohead', 5)
 
     >> radiohead_cc.push('Ed')
     >> radiohead_cc.push('Colin')
