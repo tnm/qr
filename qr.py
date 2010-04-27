@@ -126,7 +126,6 @@ class CappedCollection(object):
 
     def pop(self):
         key = self.key
-        size = self.size
         popped = redis.rpop(key)
         return popped
 
