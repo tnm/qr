@@ -21,7 +21,7 @@ try:
 except ImportError:
     import simplejson as json
 
-#The redis-py object -- modify/remove this to match with your namespacing
+# The redis-py object -- modify/remove this to match with your namespacing
 redis = redis.Redis()
 
 class NullHandler(logging.Handler):
@@ -29,12 +29,12 @@ class NullHandler(logging.Handler):
     def emit(self, record):
         pass
 
-#Disable logging to prevent warnings from the logging module. Clients 
-#can add their own handlers if they are interested.
+# Disable logging to prevent warnings from the logging module. Clients 
+# can add their own handlers if they are interested.
 log = logging.getLogger('qr')
 log.addHandler(NullHandler())
 	
-#The Data Structures
+# The Data Structures
 class Deque(object):
     """Implements a double-ended queue"""
 
