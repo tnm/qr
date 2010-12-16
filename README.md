@@ -6,7 +6,8 @@ Redis is well-suited for implementations of these abstract data structures, and 
 
 Quick Setup
 ------------
-You'll need [Redis](http://github.com/antirez/redis/ "Redis") itself (QR makes use of MULTI/EXEC, so you'll Redis 2.0 or one of the later 1.3.x releases), and the Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Install QR with the included setup.py.
+You'll need [Redis](http://github.com/antirez/redis/ "Redis") itself -- QR makes use of MULTI/EXEC, so you'll need Redis 2.0 or 
+greater (or one of the later 1.3.x releases). Also necessary is the Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). You can install QR with the included setup.py.
 
 Basics of QR
 ------------------
