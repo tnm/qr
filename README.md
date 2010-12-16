@@ -1,19 +1,17 @@
 QR
 =====
 
-**QR** helps you create and work with **queue, capped collection (bounded queue), deque, and stack** data structures for **Redis**. Redis is well-suited for implementations of these abstract data structures, and QR makes it even easier to work with the structures in Python.
+**QR** helps you create and work with **queue, capped collection (bounded queue), deque, and stack** data structures for **Redis**. 
+Redis is well-suited for implementations of these abstract data structures, and QR makes it even easier to work with the structures in Python.
 
 Quick Setup
 ------------
-You'll need [Redis](http://github.com/antirez/redis/ "Redis") itself (QR makes use of MULTI/EXEC, so you'll Redis 2.0 or one of the later 1.3.x releases), and the current Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Put **qr.py** in your PYTHONPATH and you're all set.
+You'll need [Redis](http://github.com/antirez/redis/ "Redis") itself (QR makes use of MULTI/EXEC, so you'll Redis 2.0 or one of the later 1.3.x releases), and the Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Install QR with the included setup.py.
 
-**qr.py** also creates an instance of the redis-py interface object. You may already have instantiated the object in your code, so you'll want to ensure consistent namespacing. You can remove this line of code, modify the namespacing, or adjust your existing namespacing -- whatever works best for you.
-
-
-QR as Abstraction
+Basics of QR
 ------------------
 
-You probably know this already, but here's the 20-second overview of these four lovely data structures.
+You probably know this already, but here's the 20-second overview of these four data structures.
 
 A **queue**:
 
@@ -69,9 +67,9 @@ And, of course, we know who joins the band next.
 
 We can get back (no pun intended) the elements from the queue, too. In fact, each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
 
-* Call **elements**, and you'll get back a Python list. 
+* Call **elements()**, and you'll get back a Python list. 
 
-* Call **elements_as_json**, and you'll get back the list as a JSON object.
+* Call **elements_as_json()**, and you'll get back the list as a JSON object.
 
 For example:
 
@@ -135,8 +133,6 @@ The Kinks stack is as easy as:
 The stack has the same methods as the queue.
 
 
-
-
 Additions, More
 -----------------------
 
@@ -144,7 +140,7 @@ Feel free to fork!
 
 Thanks to mafr for some initial tests. 
 
-Author: Ted Nyman | @tnm8
+Author: Ted Nyman | @tnm
 
 
 MIT License
