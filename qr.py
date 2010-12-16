@@ -1,6 +1,7 @@
 """
 QR | Redis-Based Data Structures in Python
 
+    16 Dec 2010 | Add more logging (0.2.1)
     26 Apr 2010 | Major API change; capped collections, remove autopop (0.2.0)
      7 Mar 2010 | Auto popping for bounded queues is optional (0.1.4)
      5 Mar 2010 | Returns work for both bounded and unbounded (0.1.3)
@@ -10,7 +11,7 @@ QR | Redis-Based Data Structures in Python
 """
 
 __author__ = 'Ted Nyman'
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 __license__ = 'MIT'
 
 import redis
@@ -21,7 +22,7 @@ try:
 except ImportError:
     import simplejson as json
 
-# The redis-py object -- modify/remove this to match with your namespacing
+# redis interface
 redis = redis.Redis()
 
 class NullHandler(logging.Handler):
@@ -29,12 +30,10 @@ class NullHandler(logging.Handler):
     def emit(self, record):
         pass
 
-# Disable logging to prevent warnings from the logging module. Clients 
-# can add their own handlers if they are interested.
+# Clients can add handlers if they are interested.
 log = logging.getLogger('qr')
 log.addHandler(NullHandler())
 	
-# The Data Structures
 class Deque(object):
     """Implements a double-ended queue"""
 
@@ -45,24 +44,26 @@ class Deque(object):
         """Push an element to the back"""
         key = self.key
         push_it = redis.lpush(key, element)
-        log.debug('PUSHED: %s' % (element))
+        log.debug('Pushed ** %s ** for key ** %s **' % (element, key))
 		
     def pushfront(self, element):
         """Push an element to the front"""
         key = self.key
         push_it = redis.rpush(key, element)
-        log.debug('PUSHED: %s' % (element))
+        log.debug('Pushed ** %s ** for key ** %s **' % (element, key))
 
     def popfront(self):
         """Pop an element from the front"""
         key = self.key
         popped = redis.rpop(key)
+        log.debug('Popped ** %s ** from key ** %s **' % (popped, key))
         return popped 
 
     def popback(self):
         """Pop an element from the back"""
         key = self.key
         popped = redis.lpop(key)
+        log.debug('Popped ** %s ** from key ** %s **' % (popped, key))
         return popped 
 
     def elements(self):
@@ -88,12 +89,13 @@ class Queue(object):
         """Push an element"""
         key = self.key
         push_it = redis.lpush(key, element)
-        log.debug('PUSHED: %s' % (element))
-		
+        log.debug('Pushed ** %s ** for key ** %s **' % (element, key))
+
     def pop(self):
         """Pop an element"""
         key = self.key
         popped = redis.rpop(key)
+        log.debug('Popped ** %s ** from key ** %s **' % (popped, key))
         return popped 	
 
     def elements(self):
@@ -127,6 +129,7 @@ class CappedCollection(object):
     def pop(self):
         key = self.key
         popped = redis.rpop(key)
+        log.debug('Popped ** %s ** from key ** %s **' % (popped, key))
         return popped
 
     def elements(self):
@@ -152,12 +155,13 @@ class Stack(object):
         """Push an element"""
         key = self.key
         push_it = redis.lpush(key, element)
-        log.debug('PUSHED: %s' % (element))
+        log.debug('Pushed ** %s ** for key ** %s **' % (element, key))
 		 
     def pop(self):
         """Pop an element"""
         key = self.key
         popped = redis.lpop(key)
+        log.debug('Popped ** %s ** from key ** %s **' % (popped, key))
         return popped 
 	
     def elements(self):

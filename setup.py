@@ -4,7 +4,7 @@ import os
 import unittest
 from setuptools import setup, find_packages
 
-version = '0.2.0'
+version = '0.2.1'
 
 
 LONG_DESCRIPTION = '''
@@ -23,14 +23,9 @@ Quick Setup
 ------------
 You'll need [Redis](http://github.com/antirez/redis/ "Redis") itself (QR makes use 
 of MULTI/EXEC, so you'll need the Git edge version), and the current Python interface
-for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). Put **qr.py**
-in your PYTHONPATH and you're all set.
+for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). 
 
-**qr.py** also creates an instance of the redis-py interface object. You may already
-have instantiated the object in your code, so you'll want to ensure consistent namespacing.
-You can remove this line of code, modify the namespacing, or adjust your existing namespacing --
-whatever works best for you.
-
+Run setup.py to install qr.
 
 '''
 
