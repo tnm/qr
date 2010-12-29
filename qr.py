@@ -122,8 +122,8 @@ class CappedCollection(object):
     def push(self, element):
         key = self.key
         size = self.size
-        pipe = redis.pipeline() #Use multi-exec command via redis-py pipelining
-        pipe = pipe.lpush(key, element).ltrim(key, 0, size-1) #ltrim is zero-indexed 
+        pipe = redis.pipeline() # Use multi-exec command via redis-py pipelining
+        pipe = pipe.lpush(key, element).ltrim(key, 0, size-1) # ltrim is zero-indexed 
         pipe.execute()
 
     def pop(self):
