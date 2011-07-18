@@ -117,10 +117,10 @@ If you wanted a deque for the Rolling Stones:
 
 The deque, of course, has different methods:
 
-* pushfront()
-* pushback()
-* popfront()
-* popback()
+* push_front()
+* push_back()
+* pop_front()
+* pop_back()
     
 
 A Stack
