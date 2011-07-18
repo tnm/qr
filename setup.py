@@ -4,7 +4,7 @@ import os
 import unittest
 from setuptools import setup, find_packages
 
-version = '0.2.1'
+version = '0.3.0'
 
 
 LONG_DESCRIPTION = '''
