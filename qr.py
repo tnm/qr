@@ -33,6 +33,11 @@ log = logging.getLogger('qr')
 log.addHandler(NullHandler())
 
 class BaseQueue(object):
+    @staticmethod
+    def all(t, pattern, **kwargs):
+        r = redis.Redis(**kwargs)
+        return [t(k, **kwargs) for k in r.keys(pattern)]
+    
     def __init__(self, key, **kwargs):
         self.serializer = pickle
         self.redis = redis.Redis(**kwargs)
@@ -85,6 +90,10 @@ class BaseQueue(object):
 
 class Deque(BaseQueue):
     """Implements a double-ended queue"""
+    
+    @staticmethod
+    def all(pattern='*', **kwargs):
+        return BaseQueue.all(Deque, pattern, **kwargs)
 
     def push_back(self, element):
         """Push an element to the back of the deque"""
@@ -111,6 +120,10 @@ class Deque(BaseQueue):
 
 class Queue(BaseQueue): 
     """Implements a FIFO queue"""
+
+    @staticmethod
+    def all(pattern='*', **kwargs):
+        return BaseQueue.all(Queue, pattern, **kwargs)
     
     def push(self, element):
         """Push an element"""
@@ -128,9 +141,13 @@ class CappedCollection(BaseQueue):
     Implements a capped collection (the collection never
     gets larger than the specified size).
     """
+    
+    @staticmethod
+    def all(pattern='*', **kwargs):
+        return BaseQueue.all(CappedCollection, pattern, **kwargs)
 
-    def __init__(self, key, size):
-        BaseQueue.__init__(self, key)
+    def __init__(self, key, size, **kwargs):
+        BaseQueue.__init__(self, key, **kwargs)
         self.size = size
 
     def push(self, element):
@@ -155,6 +172,10 @@ class CappedCollection(BaseQueue):
 class Stack(BaseQueue):
     """Implements a LIFO stack""" 
 
+    @staticmethod
+    def all(pattern='*', **kwargs):
+        return BaseQueue.all(Stack, pattern, **kwargs)
+    
     def push(self, element):
         """Push an element"""
         self.redis.lpush(self.key, self._pack(element))
