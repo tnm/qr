@@ -50,9 +50,9 @@ class BaseQueue(object):
     def __getitem__(self, val):
         """Get a slice or a particular index."""
         try:
-            return self.redis.lrange(self.key, val.start, val.stop)
+            return [self._unpack(i) for i in self.redis.lrange(self.key, val.start, val.stop)]
         except AttributeError:
-            return self.redis.lindex(self.key, val)
+            return self._unpack(self.redis.lindex(self.key, val))
         except Exception as e:
             log.error('Get item failed ** %s' % repr(e))
             return []
