@@ -32,15 +32,29 @@ class NullHandler(logging.Handler):
 log = logging.getLogger('qr')
 log.addHandler(NullHandler())
 
+# A dictionary of connection pools, based on the parameters used
+# when connecting. This is so we don't have an unwieldy number of
+# connections
+connectionPools = {}
+
+def getRedis(**kwargs):
+	key = ':'.join((repr(key) + '=>' + repr(value)) for key, value in kwargs.items())
+	try:
+		return redis.Redis(connection_pool=connectionPools[key])
+	except KeyError:
+		cp = redis.ConnectionPool(**kwargs)
+		connectionPools[key] = cp
+		return redis.Redis(connection_pool=cp)
+
 class BaseQueue(object):
     @staticmethod
     def all(t, pattern, **kwargs):
-        r = redis.Redis(**kwargs)
+        r = getRedis(**kwargs)
         return [t(k, **kwargs) for k in r.keys(pattern)]
     
     def __init__(self, key, **kwargs):
         self.serializer = pickle
-        self.redis = redis.Redis(**kwargs)
+        self.redis = getRedis(**kwargs)
         self.key = key
     
     def __len__(self):
