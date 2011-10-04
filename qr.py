@@ -70,10 +70,10 @@ class BaseQueue(object):
 
     def extend(self, vals):
         """Extends the elements in the queue."""
-        pipe = self.redis.pipeline()
-        for val in vals:
-            self.redis.lpush(self.key, self._pack(val))
-        pipe.execute()
+        with self.redis.pipeline(transaction=False) as pipe:
+            for val in vals:
+                self.redis.lpush(self.key, self._pack(val))
+            pipe.execute()
 
     def peek(self):
         """Look at the next item in the queue"""
@@ -152,17 +152,18 @@ class CappedCollection(BaseQueue):
 
     def push(self, element):
         size = self.size
-        pipe = self.redis.pipeline() # Use multi-exec command via redis-py pipelining
-        pipe = pipe.lpush(self.key, self._pack(element)).ltrim(self.key, 0, size-1) # ltrim is zero-indexed 
-        pipe.execute()
+        with self.redis.pipeline() as pipe:
+            # ltrim is zero-indexed 
+            pipe = pipe.lpush(self.key, self._pack(element)).ltrim(self.key, 0, size-1)
+            pipe.execute()
 
     def extend(self, vals):
         """Extends the elements in the queue."""
-        pipe = self.redis.pipeline()
-        for val in vals:
-            self.redis.lpush(self.key, self._pack(val))
-        pipe.ltrim(self.key, 0, self.size-1)
-        pipe.execute()
+        with self.redis.pipeline() as pipe:
+            for val in vals:
+                self.redis.lpush(self.key, self._pack(val))
+            pipe.ltrim(self.key, 0, self.size-1)
+            pipe.execute()
 
     def pop(self):
         popped = self.redis.rpop(self.key)
