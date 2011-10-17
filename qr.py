@@ -1,6 +1,5 @@
 """
 QR | Redis-Based Data Structures in Python
-
 """
 
 __author__ = 'Ted Nyman'
@@ -38,13 +37,13 @@ log.addHandler(NullHandler())
 connectionPools = {}
 
 def getRedis(**kwargs):
-	key = ':'.join((repr(key) + '=>' + repr(value)) for key, value in kwargs.items())
-	try:
-		return redis.Redis(connection_pool=connectionPools[key])
-	except KeyError:
-		cp = redis.ConnectionPool(**kwargs)
-		connectionPools[key] = cp
-		return redis.Redis(connection_pool=cp)
+    key = ':'.join((repr(key) + '=>' + repr(value)) for key, value in kwargs.items())
+    try:
+        return redis.Redis(connection_pool=connectionPools[key])
+    except KeyError:
+        cp = redis.ConnectionPool(**kwargs)
+        connectionPools[key] = cp
+        return redis.Redis(connection_pool=cp)
 
 class BaseQueue(object):
     @staticmethod
@@ -81,28 +80,42 @@ class BaseQueue(object):
             return self.serializer.loads(val)
         except TypeError:
             return None
-	
-	def dump(self, fp):
-		'''Destructively dump the contents of the queue into fp'''
-		next = self.redis.rpop(self.key)
-		while next:
-			fp.write(next)
-			next = self.redis.rpop(self.key)
-	
-	def load(self, fp):
-		'''Load the contents of the provided fp into the queue'''
-		next = self.serializer.load(fp)
-		while next:
-			self.redis.lpush(self.serializer._pack(next))
-			next = self.serializer.load(fp)
-
+    
+    def dump(self, fobj):
+        """Destructively dump the contents of the queue into fp"""
+        next = self.redis.rpop(self.key)
+        while next:
+            fobj.write(next)
+            next = self.redis.rpop(self.key)
+    
+    def load(self, fobj):
+        """Load the contents of the provided fobj into the queue"""
+        next = self.serializer.load(obj)
+        while next:
+            self.redis.lpush(self.serializer._pack(next))
+            next = self.serializer.load(fobj)
+    
+    def dumpfname(self, fname, truncate=False):
+        """Destructively dump the contents of the queue into fname"""
+        if truncate:
+            with file(fname, 'w+') as f:
+                self.dump(f)
+        else:
+            with file(fname, 'a+') as f:
+                self.dump(f)
+    
+    def loadfname(self, fname):
+        """Load the contents of the contents of fname into the queue"""
+        with file(fname) as f:
+            self.load(f)
+    
     def extend(self, vals):
         """Extends the elements in the queue."""
         with self.redis.pipeline(transaction=False) as pipe:
             for val in vals:
                 self.redis.lpush(self.key, self._pack(val))
             pipe.execute()
-	
+    
     def peek(self):
         """Look at the next item in the queue"""
         return self[-1]
