@@ -69,7 +69,7 @@ class BaseQueue(object):
             return self._unpack(self.redis.lindex(self.key, val))
         except Exception as e:
             log.error('Get item failed ** %s' % repr(e))
-            return []
+            return None
     
     def _pack(self, val):
         """Prepares a message to go into Redis"""
@@ -81,6 +81,20 @@ class BaseQueue(object):
             return self.serializer.loads(val)
         except TypeError:
             return None
+	
+	def dump(self, fp):
+		'''Destructively dump the contents of the queue into fp'''
+		next = self.redis.rpop(self.key)
+		while next:
+			fp.write(next)
+			next = self.redis.rpop(self.key)
+	
+	def load(self, fp):
+		'''Load the contents of the provided fp into the queue'''
+		next = self.serializer.load(fp)
+		while next:
+			self.redis.lpush(self.serializer._pack(next))
+			next = self.serializer.load(fp)
 
     def extend(self, vals):
         """Extends the elements in the queue."""
@@ -88,7 +102,7 @@ class BaseQueue(object):
             for val in vals:
                 self.redis.lpush(self.key, self._pack(val))
             pipe.execute()
-
+	
     def peek(self):
         """Look at the next item in the queue"""
         return self[-1]
