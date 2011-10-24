@@ -27,7 +27,7 @@ QR queues store serialized Python objects (using [cPickle](http://docs.python.or
 setting the serializer on a per-queue basis. Functionally, this means "Python object in, and Python object out." There are a few constraints
 on what can be pickled, and thus put into queues (from the Python documentation):
 
-- `None`, `True`, `and `False`
+- `None`, `True`, and `False`
 - Integers, long integers, floating point numbers, complex numbers
 - Normal and Unicode strings
 - Tuples, lists, sets, and dictionaries containing only picklable objects
