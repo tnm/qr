@@ -37,6 +37,11 @@ log.addHandler(NullHandler())
 connectionPools = {}
 
 def getRedis(**kwargs):
+	"""Match up the provided kwargs with an existing connection pool.
+	In cases where you may want a lot of queues, the redis library will
+	by default open at least one connection for each. This uses redis'
+	connection pool mechanism to keep the number of open file descriptors
+	tractable."""
     key = ':'.join((repr(key) + '=>' + repr(value)) for key, value in kwargs.items())
     try:
         return redis.Redis(connection_pool=connectionPools[key])
@@ -46,6 +51,7 @@ def getRedis(**kwargs):
         return redis.Redis(connection_pool=cp)
 
 class BaseQueue(object):
+	"""Base functionality common to queues"""
     @staticmethod
     def all(t, pattern, **kwargs):
         r = getRedis(**kwargs)
@@ -113,7 +119,7 @@ class BaseQueue(object):
         """Extends the elements in the queue."""
         with self.redis.pipeline(transaction=False) as pipe:
             for val in vals:
-                self.redis.lpush(self.key, self._pack(val))
+                pipe.lpush(self.key, self._pack(val))
             pipe.execute()
     
     def peek(self):
@@ -202,7 +208,7 @@ class CappedCollection(BaseQueue):
         """Extends the elements in the queue."""
         with self.redis.pipeline() as pipe:
             for val in vals:
-                self.redis.lpush(self.key, self._pack(val))
+                pipe.lpush(self.key, self._pack(val))
             pipe.ltrim(self.key, 0, self.size-1)
             pipe.execute()
 
