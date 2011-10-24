@@ -12,31 +12,29 @@ You will need:
 - [redis](http://redis.io/download "Redis") >= 2.0
 - [redis-py](http://github.com/andymccurdy/redis-py "redis-pi")
 
-Redis is available in many package managers by default, or built from source (its only dependency is libc, so it's extremely portable). Redis-py is 
-available via `setuptools` or `pip`:
+Redis is available in many package managers by default, or built from source (its only dependency is libc, so it's extremely portable). 
+redis-py is available via `setuptools` or `pip`:
 
 	# Install redis-py
 	$> sudo pip install redis
-	# Install qr from pypi
-	$> sudo pip install qr
-	# Or from source
+	# Install qr
 	$> python setup.py install
 
 Basics of QR
 ------------------
 
-QR queues store serialized python objects (using [cPickle](http://docs.python.org/library/pickle.html) by default), but that can be changed by 
-setting the serializer on a per-queue basis. Functionally, this means python object in, and python object out. There are just a few constraints
-on what can be pickled and thus put into queues (from the python documentation):
+QR queues store serialized Python objects (using [cPickle](http://docs.python.org/library/pickle.html) by default), but that can be changed by 
+setting the serializer on a per-queue basis. Functionally, this means "Python object in, and Python object out." There are a few constraints
+on what can be pickled, and thus put into queues (from the Python documentation):
 
-- None, True, and False
-- integers, long integers, floating point numbers, complex numbers
-- normal and Unicode strings
-- tuples, lists, sets, and dictionaries containing only picklable objects
-- functions defined at the top level of a module
-- built-in functions defined at the top level of a module
-- classes that are defined at the top level of a module
-- instances of such classes whose __dict__ or __setstate__() is picklable (see section The pickle protocol for details)
+- `None`, `True`, `and `False`
+- Integers, long integers, floating point numbers, complex numbers
+- Normal and Unicode strings
+- Tuples, lists, sets, and dictionaries containing only picklable objects
+- Functions defined at the top level of a module
+- Built-in functions defined at the top level of a module
+- Classes that are defined at the top level of a module
+- Instances of such classes whose `__dict__` or `__setstate__()` is picklable (see section 'The pickle protocol' for details)
 
 You probably know this already, but here's the 20-second overview of these four data structures.
 
@@ -201,7 +199,7 @@ Additions, More
 
 Feel free to fork! 
 
-Thanks to mafr for some initial tests. 
+Thanks to mafr for some initial tests and dlecocq/seomoz for serialization work.
 
 Author: Ted Nyman | @tnm
 
