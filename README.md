@@ -6,11 +6,37 @@ Redis is well-suited for implementations of these abstract data structures, and 
 
 Quick Setup
 ------------
-You'll need [Redis](http://github.com/antirez/redis/ "Redis") itself -- QR makes use of MULTI/EXEC, so you'll need Redis 2.0 or 
-greater (or one of the later 1.3.x releases). Also necessary is the Python interface for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py"). You can install QR with the included setup.py.
+
+You will need:
+
+- [redis](http://redis.io/download "Redis") >= 2.0
+- [redis-py](http://github.com/andymccurdy/redis-py "redis-pi")
+
+Redis is available in many package managers by default, or built from source (its only dependency is libc, so it's extremely portable). Redis-py is 
+available via `setuptools` or `pip`:
+
+	# Install redis-py
+	$> sudo pip install redis
+	# Install qr from pypi
+	$> sudo pip install qr
+	# Or from source
+	$> python setup.py install
 
 Basics of QR
 ------------------
+
+QR queues store serialized python objects (using [cPickle](http://docs.python.org/library/pickle.html) by default), but that can be changed by 
+setting the serializer on a per-queue basis. Functionally, this means python object in, and python object out. There are just a few constraints
+on what can be pickled and thus put into queues (from the python documentation):
+
+- None, True, and False
+- integers, long integers, floating point numbers, complex numbers
+- normal and Unicode strings
+- tuples, lists, sets, and dictionaries containing only picklable objects
+- functions defined at the top level of a module
+- built-in functions defined at the top level of a module
+- classes that are defined at the top level of a module
+- instances of such classes whose __dict__ or __setstate__() is picklable (see section The pickle protocol for details)
 
 You probably know this already, but here's the 20-second overview of these four data structures.
 
@@ -51,20 +77,20 @@ Cool, let's create a Beatles queue, circa 1962.
 
 You are now the owner of a Queue object (`bqueue`), associated with the Redis key 'Beatles'. 
 
-    >> bqueue.push('Pete')
+	>> bqueue.push('Pete')
 	>> bqueue.push('John')
-    >> bqueue.push('Paul')
-    >> bqueue.push('George')
+	>> bqueue.push('Paul')
+	>> bqueue.push('George')
 
 Unfortunately, George Martin doesn't like Pete Best, so it's time to pop him. Since Pete was first in, and this is a queue, after all, we 
 just do this:
 
-    >> bqueue.pop()
-    'Pete'
+	>> bqueue.pop()
+	'Pete'
 
 And, of course, we know who joins the band next.
 
-    >> bqueue.push('Ringo')
+	>> bqueue.push('Ringo')
 
 We can get back (no pun intended) the elements from the queue, too. In fact, each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
 
@@ -88,24 +114,23 @@ I don't know if you've heard, but Donald Knuth will be joining Radiohead soon. T
 	>> from qr import CappedCollection
 	>> radiohead_cc = CappedCollection('Radiohead', 5)
 
-    >> radiohead_cc.push('Ed')
-    >> radiohead_cc.push('Colin')
-    >> radiohead_cc.push('Thom')
-    >> radiohead_cc.push('Jonny')
-    >> radiohead_cc.push('Phil')
+	>> radiohead_cc.push('Ed')
+	>> radiohead_cc.push('Colin')
+	>> radiohead_cc.push('Thom')
+	>> radiohead_cc.push('Jonny')
+	>> radiohead_cc.push('Phil')
 
-    >> radiohead_cc.elements()
+	>> radiohead_cc.elements()
 	['Phil', 'Jonny', 'Thom', 'Colin', 'Ed']
 
 Now it's time for Donald to join the group.
 
-    >> radiohead_cc.push('Donald')
+	>> radiohead_cc.push('Donald')
 
 And our new Radiohead is :
 
-    >> radiohead_cc.elements()
+	>> radiohead_cc.elements()
 	['Donald', 'Phil', 'Jonny', 'Thom', 'Colin']
-
 
 A Deque
 --------
@@ -121,7 +146,6 @@ The deque, of course, has different methods:
 * push_back()
 * pop_front()
 * pop_back()
-    
 
 A Stack
 --------
@@ -133,6 +157,44 @@ The Kinks stack is as easy as:
 
 The stack has the same methods as the queue.
 
+All Queue Types
+---------------
+
+All queues have certain additional features. For example, you can add multiple elements at once:
+
+	>> from qr import Queue
+	>> q = Queue('widgets')
+	>> q.extend(['foo', 'bar', 'sprockets'])
+
+You can also get the number of elements in the queue like you would from any normal python list:
+
+	>> len(q)
+	3
+
+Or look up a particular element from the queue (or range of elements). **Careful** -- in Redis, lists are linked lists, and so index lookups are **O(n) to lookup the n'th position**. We make this functionality available in qr, but be careful looking up large indices. Looking at the front or back of the queue is cheap, though:
+
+	>> q[0]
+	'foo'
+	>> q[1:2]
+	['bar', 'sprockets']
+	>> q[-1]
+	'sprockets'
+	>> q.peek()
+	'foo'
+
+You can also put most python objects into queues, and you get the same object back when you pop it.
+
+	>> from widgets import Widget
+	>> from sprockets import Sprocket
+	>> q = Queue('work')
+	# Put a sproket, widget and string in the queue
+	>> q.extend([Sproket('foo'), Widget('bar'), 'Frank Sinatra'])
+	>> q.pop()
+	<sprocket.Sproket object>
+	>> q.pop()
+	<widget.Widget object>
+	>> q.pop()
+	'Frank Sinatra'
 
 Additions, More
 -----------------------
