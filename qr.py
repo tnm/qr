@@ -3,7 +3,7 @@ QR | Redis-Based Data Structures in Python
 """
 
 __author__ = 'Ted Nyman'
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 __license__ = 'MIT'
 
 import redis
