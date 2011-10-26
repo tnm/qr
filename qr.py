@@ -37,11 +37,11 @@ log.addHandler(NullHandler())
 connectionPools = {}
 
 def getRedis(**kwargs):
-	"""Match up the provided kwargs with an existing connection pool.
-	In cases where you may want a lot of queues, the redis library will
-	by default open at least one connection for each. This uses redis'
-	connection pool mechanism to keep the number of open file descriptors
-	tractable."""
+    """Match up the provided kwargs with an existing connection pool.
+    In cases where you may want a lot of queues, the redis library will
+    by default open at least one connection for each. This uses redis'
+    connection pool mechanism to keep the number of open file descriptors
+    tractable."""
     key = ':'.join((repr(key) + '=>' + repr(value)) for key, value in kwargs.items())
     try:
         return redis.Redis(connection_pool=connectionPools[key])
@@ -51,7 +51,7 @@ def getRedis(**kwargs):
         return redis.Redis(connection_pool=cp)
 
 class BaseQueue(object):
-	"""Base functionality common to queues"""
+    """Base functionality common to queues"""
     @staticmethod
     def all(t, pattern, **kwargs):
         r = getRedis(**kwargs)
