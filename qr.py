@@ -51,7 +51,7 @@ def getRedis(**kwargs):
         return redis.Redis(connection_pool=cp)
 
 class BaseQueue(object):
-	"""Base functionality common to queues"""
+    """Base functionality common to queues"""
     @staticmethod
     def all(t, pattern, **kwargs):
         r = getRedis(**kwargs)
