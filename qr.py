@@ -78,7 +78,7 @@ class BaseQueue(object):
     
     def _pack(self, val):
         """Prepares a message to go into Redis"""
-        return self.serializer.dumps(val)
+        return self.serializer.dumps(val, 1)
     
     def _unpack(self, val):
         """Unpacks a message stored in Redis"""
@@ -98,7 +98,7 @@ class BaseQueue(object):
         """Load the contents of the provided fobj into the queue"""
         next = self.serializer.load(obj)
         while next:
-            self.redis.lpush(self.serializer._pack(next))
+            self.redis.lpush(self._pack(next))
             next = self.serializer.load(fobj)
     
     def dumpfname(self, fname, truncate=False):
@@ -132,8 +132,7 @@ class BaseQueue(object):
     
     def elements_as_json(self):
         """Return all elements as JSON object"""
-        all_elements = self.redis.lrange(self.key, 0, -1)
-        return json.dumps(all_elements)
+        return json.dumps(self.elements)
 
 class Deque(BaseQueue):
     """Implements a double-ended queue"""
@@ -183,6 +182,86 @@ class Queue(BaseQueue):
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
     
+class PriorityQueue(BaseQueue):
+    """A priority queue"""
+    def __len__(self):
+        """Return the length of the queue"""
+        return self.redis.zcard(self.key)
+    
+    def __getitem__(self, val):
+        """Get a slice or a particular index."""
+        try:
+            return [self._unpack(i) for i in self.redis.zrange(self.key, val.start, val.stop)]
+        except AttributeError:
+            val = self.redis.zrange(self.key, val, val)
+            if val:
+                return self._unpack(val[0])
+            return None
+        except Exception as e:
+            log.error('Get item failed ** %s' % repr(e))
+            return None
+    
+    def dump(self, fobj):
+        """Destructively dump the contents of the queue into fp"""
+        next = self.redis.zrange(self.key, 0, 0, withscores=True)
+        removed = self.redis.zremrangebyrank(self.key, 0, 0)
+        while next:
+            fobj.write(next[0])
+            next = self.redis.zrange(self.key, 0, 0)
+            removed = self.redis.zremrangebyrank(self.key, 0, 0)
+    
+    def load(self, fobj):
+        """Load the contents of the provided fobj into the queue"""
+        next = self.serializer.load(fobj)
+        while next:
+            self.redis.zadd(self.key, self.serializer._pack(*next))
+            next = self.serializer.load(fobj)
+    
+    def dumpfname(self, fname, truncate=False):
+        """Destructively dump the contents of the queue into fname"""
+        if truncate:
+            with file(fname, 'w+') as f:
+                self.dump(f)
+        else:
+            with file(fname, 'a+') as f:
+                self.dump(f)
+    
+    def loadfname(self, fname):
+        """Load the contents of the contents of fname into the queue"""
+        with file(fname) as f:
+            self.load(f)
+    
+    def extend(self, vals):
+        """Extends the elements in the queue."""
+        with self.redis.pipeline(transaction=False) as pipe:
+            for val, score in vals:
+                pipe.zadd(self.key, self._pack(val), score)
+            pipe.execute()
+
+    def peek(self, withscores=False):
+        """Look at the next item in the queue"""
+        return self[-1]
+
+    def elements(self):
+        """Return all elements as a Python list"""
+        return self.redis.zrange(self.key, 0, -1)
+
+    def pop(self, withscores=False):
+		'''Get the element with the lowest score, and pop it off'''
+        results = self.redis.zrange(self.key, 0, 0, withscores=True)
+        if results:
+            value, score = results[0]
+            value = self._unpack(value)
+            self.redis.zremrangebyrank(self.key, 0, 0)
+            if withscores:
+                return (value, score)
+            return value
+        return None
+    
+    def push(self, value, score):
+		'''Add an element with a given score'''
+        self.redis.zadd(self.key, self._pack(value), score)
+
 class CappedCollection(BaseQueue):
     """
     Implements a capped collection (the collection never
