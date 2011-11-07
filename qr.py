@@ -247,7 +247,7 @@ class PriorityQueue(BaseQueue):
         return self.redis.zrange(self.key, 0, -1)
 
     def pop(self, withscores=False):
-		'''Get the element with the lowest score, and pop it off'''
+        '''Get the element with the lowest score, and pop it off'''
         results = self.redis.zrange(self.key, 0, 0, withscores=True)
         if results:
             value, score = results[0]
@@ -259,7 +259,7 @@ class PriorityQueue(BaseQueue):
         return None
     
     def push(self, value, score):
-		'''Add an element with a given score'''
+        '''Add an element with a given score'''
         self.redis.zadd(self.key, self._pack(value), score)
 
 class CappedCollection(BaseQueue):
