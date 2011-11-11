@@ -69,7 +69,7 @@ class BaseQueue(object):
     def __getitem__(self, val):
         """Get a slice or a particular index."""
         try:
-            return [self._unpack(i) for i in self.redis.lrange(self.key, val.start, val.stop)]
+            return [self._unpack(i) for i in self.redis.lrange(self.key, val.start, val.stop - 1)]
         except AttributeError:
             return self._unpack(self.redis.lindex(self.key, val))
         except Exception as e:
@@ -96,10 +96,11 @@ class BaseQueue(object):
     
     def load(self, fobj):
         """Load the contents of the provided fobj into the queue"""
-        next = self.serializer.load(obj)
-        while next:
-            self.redis.lpush(self._pack(next))
-            next = self.serializer.load(fobj)
+        try:
+            while True:
+                self.redis.lpush(self.key, self._pack(self.serializer.load(fobj)))
+        except:
+            return
     
     def dumpfname(self, fname, truncate=False):
         """Destructively dump the contents of the queue into fname"""
@@ -128,11 +129,15 @@ class BaseQueue(object):
 
     def elements(self):
         """Return all elements as a Python list"""
-        return self.redis.lrange(self.key, 0, -1)
+        return [self._unpack(o) for o in self.redis.lrange(self.key, 0, -1)]
     
     def elements_as_json(self):
         """Return all elements as JSON object"""
         return json.dumps(self.elements)
+    
+    def clear(self):
+        """Removes all the elements in the queue"""
+        self.redis.delete(self.key)
 
 class Deque(BaseQueue):
     """Implements a double-ended queue"""
@@ -191,7 +196,7 @@ class PriorityQueue(BaseQueue):
     def __getitem__(self, val):
         """Get a slice or a particular index."""
         try:
-            return [self._unpack(i) for i in self.redis.zrange(self.key, val.start, val.stop)]
+            return [self._unpack(i) for i in self.redis.zrange(self.key, val.start, val.stop - 1)]
         except AttributeError:
             val = self.redis.zrange(self.key, val, val)
             if val:
@@ -206,16 +211,18 @@ class PriorityQueue(BaseQueue):
         next = self.redis.zrange(self.key, 0, 0, withscores=True)
         removed = self.redis.zremrangebyrank(self.key, 0, 0)
         while next:
-            fobj.write(next[0])
-            next = self.redis.zrange(self.key, 0, 0)
+            self.serializer.dump(next[0], fobj)
+            next = self.redis.zrange(self.key, 0, 0, withscores=True)
             removed = self.redis.zremrangebyrank(self.key, 0, 0)
     
     def load(self, fobj):
         """Load the contents of the provided fobj into the queue"""
-        next = self.serializer.load(fobj)
-        while next:
-            self.redis.zadd(self.key, self.serializer._pack(*next))
-            next = self.serializer.load(fobj)
+        try:
+            while True:
+                value, score = self.serializer.load(fobj)
+                self.redis.zadd(self.key, value, score)
+        except Exception as e:
+            return
     
     def dumpfname(self, fname, truncate=False):
         """Destructively dump the contents of the queue into fname"""
@@ -244,7 +251,7 @@ class PriorityQueue(BaseQueue):
 
     def elements(self):
         """Return all elements as a Python list"""
-        return self.redis.zrange(self.key, 0, -1)
+        return [self._unpack(o) for o in self.redis.zrange(self.key, 0, -1)]
 
     def pop(self, withscores=False):
         '''Get the element with the lowest score, and pop it off'''
@@ -313,4 +320,3 @@ class Stack(BaseQueue):
         popped = self.redis.lpop(self.key)
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
-    
