@@ -3,7 +3,7 @@ QR | Redis-Based Data Structures in Python
 """
 
 __author__ = 'Ted Nyman'
-__version__ = '0.4.0'
+__version__ = '0.5.0'
 __license__ = 'MIT'
 
 import redis
@@ -247,7 +247,14 @@ class PriorityQueue(BaseQueue):
 
     def peek(self, withscores=False):
         """Look at the next item in the queue"""
-        return self[-1]
+        val = self.redis.zrange(self.key, 0, 0, withscores=True)
+        if val:
+            value, score = val[0]
+            value = self._unpack(value)
+            if withscores:
+                return (value, score)
+            return value
+        return None
 
     def elements(self):
         """Return all elements as a Python list"""
