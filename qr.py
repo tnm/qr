@@ -254,6 +254,8 @@ class PriorityQueue(BaseQueue):
             if withscores:
                 return (value, score)
             return value
+        elif withscores:
+            return (None, 0.0)
         return None
 
     def elements(self):
@@ -270,6 +272,8 @@ class PriorityQueue(BaseQueue):
             if withscores:
                 return (value, score)
             return value
+        elif withscores:
+            return (None, 0.0)
         return None
     
     def push(self, value, score):
