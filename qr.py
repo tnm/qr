@@ -3,7 +3,7 @@ QR | Redis-Based Data Structures in Python
 """
 
 __author__ = 'Ted Nyman'
-__version__ = '0.4.0'
+__version__ = '0.5.0'
 __license__ = 'MIT'
 
 import redis
@@ -69,7 +69,7 @@ class BaseQueue(object):
     def __getitem__(self, val):
         """Get a slice or a particular index."""
         try:
-            return [self._unpack(i) for i in self.redis.lrange(self.key, val.start, val.stop)]
+            return [self._unpack(i) for i in self.redis.lrange(self.key, val.start, val.stop - 1)]
         except AttributeError:
             return self._unpack(self.redis.lindex(self.key, val))
         except Exception as e:
@@ -78,7 +78,7 @@ class BaseQueue(object):
     
     def _pack(self, val):
         """Prepares a message to go into Redis"""
-        return self.serializer.dumps(val)
+        return self.serializer.dumps(val, 1)
     
     def _unpack(self, val):
         """Unpacks a message stored in Redis"""
@@ -96,10 +96,11 @@ class BaseQueue(object):
     
     def load(self, fobj):
         """Load the contents of the provided fobj into the queue"""
-        next = self.serializer.load(obj)
-        while next:
-            self.redis.lpush(self.serializer._pack(next))
-            next = self.serializer.load(fobj)
+        try:
+            while True:
+                self.redis.lpush(self.key, self._pack(self.serializer.load(fobj)))
+        except:
+            return
     
     def dumpfname(self, fname, truncate=False):
         """Destructively dump the contents of the queue into fname"""
@@ -128,12 +129,15 @@ class BaseQueue(object):
 
     def elements(self):
         """Return all elements as a Python list"""
-        return self.redis.lrange(self.key, 0, -1)
+        return [self._unpack(o) for o in self.redis.lrange(self.key, 0, -1)]
     
     def elements_as_json(self):
         """Return all elements as JSON object"""
-        all_elements = self.redis.lrange(self.key, 0, -1)
-        return json.dumps(all_elements)
+        return json.dumps(self.elements)
+    
+    def clear(self):
+        """Removes all the elements in the queue"""
+        self.redis.delete(self.key)
 
 class Deque(BaseQueue):
     """Implements a double-ended queue"""
@@ -183,6 +187,99 @@ class Queue(BaseQueue):
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
     
+class PriorityQueue(BaseQueue):
+    """A priority queue"""
+    def __len__(self):
+        """Return the length of the queue"""
+        return self.redis.zcard(self.key)
+    
+    def __getitem__(self, val):
+        """Get a slice or a particular index."""
+        try:
+            return [self._unpack(i) for i in self.redis.zrange(self.key, val.start, val.stop - 1)]
+        except AttributeError:
+            val = self.redis.zrange(self.key, val, val)
+            if val:
+                return self._unpack(val[0])
+            return None
+        except Exception as e:
+            log.error('Get item failed ** %s' % repr(e))
+            return None
+    
+    def dump(self, fobj):
+        """Destructively dump the contents of the queue into fp"""
+        next = self.redis.zrange(self.key, 0, 0, withscores=True)
+        removed = self.redis.zremrangebyrank(self.key, 0, 0)
+        while next:
+            self.serializer.dump(next[0], fobj)
+            next = self.redis.zrange(self.key, 0, 0, withscores=True)
+            removed = self.redis.zremrangebyrank(self.key, 0, 0)
+    
+    def load(self, fobj):
+        """Load the contents of the provided fobj into the queue"""
+        try:
+            while True:
+                value, score = self.serializer.load(fobj)
+                self.redis.zadd(self.key, value, score)
+        except Exception as e:
+            return
+    
+    def dumpfname(self, fname, truncate=False):
+        """Destructively dump the contents of the queue into fname"""
+        if truncate:
+            with file(fname, 'w+') as f:
+                self.dump(f)
+        else:
+            with file(fname, 'a+') as f:
+                self.dump(f)
+    
+    def loadfname(self, fname):
+        """Load the contents of the contents of fname into the queue"""
+        with file(fname) as f:
+            self.load(f)
+    
+    def extend(self, vals):
+        """Extends the elements in the queue."""
+        with self.redis.pipeline(transaction=False) as pipe:
+            for val, score in vals:
+                pipe.zadd(self.key, self._pack(val), score)
+            pipe.execute()
+
+    def peek(self, withscores=False):
+        """Look at the next item in the queue"""
+        val = self.redis.zrange(self.key, 0, 0, withscores=True)
+        if val:
+            value, score = val[0]
+            value = self._unpack(value)
+            if withscores:
+                return (value, score)
+            return value
+        elif withscores:
+            return (None, 0.0)
+        return None
+
+    def elements(self):
+        """Return all elements as a Python list"""
+        return [self._unpack(o) for o in self.redis.zrange(self.key, 0, -1)]
+
+    def pop(self, withscores=False):
+        '''Get the element with the lowest score, and pop it off'''
+        results = self.redis.zrange(self.key, 0, 0, withscores=True)
+        if results:
+            value, score = results[0]
+            value = self._unpack(value)
+            self.redis.zremrangebyrank(self.key, 0, 0)
+            if withscores:
+                return (value, score)
+            return value
+        elif withscores:
+            return (None, 0.0)
+        return None
+    
+    def push(self, value, score):
+        '''Add an element with a given score'''
+        self.redis.zadd(self.key, self._pack(value), score)
+
 class CappedCollection(BaseQueue):
     """
     Implements a capped collection (the collection never
@@ -234,4 +331,3 @@ class Stack(BaseQueue):
         popped = self.redis.lpop(self.key)
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
-    

@@ -57,6 +57,11 @@ A **stack**, or, as they say in German, a 'Stapelspeicher':
 * You can push elements to the back of the stack and pop elements from the back of the stack.
 * It's last in, first out (LIFO).
 
+A **priority queue**
+
+* Push elements into this data structure with scores, and then retrieve them in order of their scores
+* Like Highlander, there can be only one -- value, that is. Values stored in this data structure are unique
+
 Create a QCDS 
 -------------------------------------
 
@@ -154,6 +159,41 @@ The Kinks stack is as easy as:
 	>> kinks_stack = Stack('Kinks')
 
 The stack has the same methods as the queue.
+
+A Priority Queue
+----------------
+
+Suppose you want to process various tasks in an order other than you received them, and instead,
+base on a score associated with each task. Maybe you want to process bands in the order of how
+many fans they have:
+
+	>> from qr import PriorityQueue
+	>> pr = PriorityQueue('bands')
+	>> pr.push('The Beatles', 1e7)
+	>> pr.push('Some Small Band', 1)
+	>> pr.push('They Might Be Giants', 1e6)
+	>> pr.pop()
+	'Some Small Band'
+	>> pr.pop()
+	'They Might Be Giants'
+	>> pr.pop()
+	'The Beatles'
+
+It's important to note that items in the queue are sorted by a score in ascending order, meaning
+that the items with the least score is popped off first. Additionally, values stored in the priority
+queue are unique. So, if you insert the same value twice with different scores, the value will only
+appear once in the queue, with the second score provided:
+
+	>> pr.push('The Beatles', 1e7)
+	>> pr.push('The Beatles', 1.1e7)
+	>> len(pr)
+	1
+	>> # There's still only one copy of 'The Beatles'
+	>> pr.peek(withscores=True)
+	('The Beatles', 11000000.0)
+
+In addition to the values themselves, the `pop` and `peek` commands also support the argument 
+`withscores`, which returns a tuple of the value and its score when set to `True`.
 
 All Queue Types
 ---------------
