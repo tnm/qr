@@ -62,10 +62,10 @@ A **priority queue**
 * Push elements into a priority queue with *scores*, and then retrieve the elements in order of their respective scores.
 * Values stored in the priority queue are unique.
 
-Create a QCDS 
+Using QR 
 -------------------------------------
 
-**qr.py** includes four little classes: **Queue**, **CappedCollection**, **Deque**, and **Stack**. To create a new QCDS, just create an instance as follows:
+QR contains a few small classes to represent each data structure. To get access to one of these fine data structures, just create a relevant instance.
 
 * A first-position **key** argument is required for all objects. It's the Redis **key** you want to be associated with the QCDS.
 * A second-position **size** argument is required for **CappedCollection**. That's how big you want to let the collection get.
