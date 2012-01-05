@@ -59,8 +59,8 @@ A **stack**, or, as they say in German, a 'Stapelspeicher':
 
 A **priority queue**
 
-* Push elements into this data structure with scores, and then retrieve them in order of their scores
-* Like Highlander, there can be only one -- value, that is. Values stored in this data structure are unique
+* Push elements into a priority queue with *scores*, and then retrieve the elements in order of their respective scores.
+* Values stored in the priority queue are unique.
 
 Create a QCDS 
 -------------------------------------
