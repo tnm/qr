@@ -238,12 +238,10 @@ class PriorityQueue(BaseQueue):
     
     def dump(self, fobj):
         """Destructively dump the contents of the queue into fp"""
-        next = self.redis.zrange(self.key, 0, 0, withscores=True)
-        removed = self.redis.zremrangebyrank(self.key, 0, 0)
+        next = self.pop()
         while next:
             self.serializer.dump(next[0], fobj)
-            next = self.redis.zrange(self.key, 0, 0, withscores=True)
-            removed = self.redis.zremrangebyrank(self.key, 0, 0)
+            next = self.pop()
     
     def load(self, fobj):
         """Load the contents of the provided fobj into the queue"""
