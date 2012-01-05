@@ -294,17 +294,19 @@ class PriorityQueue(BaseQueue):
 
     def pop(self, withscores=False):
         '''Get the element with the lowest score, and pop it off'''
-        results = self.redis.zrange(self.key, 0, 0, withscores=True)
-        if results:
-            value, score = results[0]
-            value = self._unpack(value)
-            self.redis.zremrangebyrank(self.key, 0, 0)
-            if withscores:
-                return (value, score)
-            return value
-        elif withscores:
-            return (None, 0.0)
-        return None
+        with self.redis.pipeline() as pipe:
+            o = pipe.zrange(self.key, 0, 0, withscores=True)
+            o = pipe.zremrangebyrank(self.key, 0, 0)
+            results, count = pipe.execute()
+            if results:
+                value, score = results[0]
+                value = self._unpack(value)
+                if withscores:
+                    return (value, score)
+                return value
+            elif withscores:
+                return (None, 0.0)
+            return None
     
     def push(self, value, score):
         '''Add an element with a given score'''
