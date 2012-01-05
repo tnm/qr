@@ -50,6 +50,33 @@ def getRedis(**kwargs):
         connectionPools[key] = cp
         return redis.Redis(connection_pool=cp)
 
+class worker(object):
+    def __init__(self, q, err=None, *args, **kwargs):
+        self.q = q
+        self.err = err
+        self.args = args
+        self.kwargs = kwargs
+    
+    def __call__(self, f):
+        def wrapped():
+            while True:
+                # Blocking pop
+                next = self.q.pop(block=True)
+                if not next:
+                    continue
+                try:
+                    # Try to execute the user's callback.
+                    f(next, *self.args, **self.kwargs)
+                except Exception as e:
+                    try:
+                        # Failing that, let's call the user's
+                        # err-back, which we should keep from
+                        # ever throwing an exception
+                        self.err(e, *args, **kwargs)
+                    except:
+                        pass
+        return wrapped
+        
 class BaseQueue(object):
     """Base functionality common to queues"""
     @staticmethod
@@ -181,9 +208,12 @@ class Queue(BaseQueue):
         self.redis.lpush(self.key, self._pack(element))
         log.debug('Pushed ** %s ** for key ** %s **' % (element, self.key))
 
-    def pop(self):
+    def pop(self, block=False):
         """Pop an element"""
-        popped = self.redis.rpop(self.key)
+        if not block:
+            popped = self.redis.rpop(self.key)
+        else:
+            queue, popped = self.redis.brpop(self.key)
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
     
@@ -208,12 +238,10 @@ class PriorityQueue(BaseQueue):
     
     def dump(self, fobj):
         """Destructively dump the contents of the queue into fp"""
-        next = self.redis.zrange(self.key, 0, 0, withscores=True)
-        removed = self.redis.zremrangebyrank(self.key, 0, 0)
+        next = self.pop()
         while next:
             self.serializer.dump(next[0], fobj)
-            next = self.redis.zrange(self.key, 0, 0, withscores=True)
-            removed = self.redis.zremrangebyrank(self.key, 0, 0)
+            next = self.pop()
     
     def load(self, fobj):
         """Load the contents of the provided fobj into the queue"""
@@ -243,7 +271,7 @@ class PriorityQueue(BaseQueue):
         with self.redis.pipeline(transaction=False) as pipe:
             for val, score in vals:
                 pipe.zadd(self.key, self._pack(val), score)
-            pipe.execute()
+            return pipe.execute()
 
     def peek(self, withscores=False):
         """Look at the next item in the queue"""
@@ -264,21 +292,23 @@ class PriorityQueue(BaseQueue):
 
     def pop(self, withscores=False):
         '''Get the element with the lowest score, and pop it off'''
-        results = self.redis.zrange(self.key, 0, 0, withscores=True)
-        if results:
-            value, score = results[0]
-            value = self._unpack(value)
-            self.redis.zremrangebyrank(self.key, 0, 0)
-            if withscores:
-                return (value, score)
-            return value
-        elif withscores:
-            return (None, 0.0)
-        return None
+        with self.redis.pipeline() as pipe:
+            o = pipe.zrange(self.key, 0, 0, withscores=True)
+            o = pipe.zremrangebyrank(self.key, 0, 0)
+            results, count = pipe.execute()
+            if results:
+                value, score = results[0]
+                value = self._unpack(value)
+                if withscores:
+                    return (value, score)
+                return value
+            elif withscores:
+                return (None, 0.0)
+            return None
     
     def push(self, value, score):
         '''Add an element with a given score'''
-        self.redis.zadd(self.key, self._pack(value), score)
+        return self.redis.zadd(self.key, self._pack(value), score)
 
 class CappedCollection(BaseQueue):
     """
@@ -309,8 +339,11 @@ class CappedCollection(BaseQueue):
             pipe.ltrim(self.key, 0, self.size-1)
             pipe.execute()
 
-    def pop(self):
-        popped = self.redis.rpop(self.key)
+    def pop(self, block=False):
+        if not block:
+            popped = self.redis.rpop(self.key)
+        else:
+            queue, popped = self.redis.brpop(self.key)
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
 
@@ -326,8 +359,11 @@ class Stack(BaseQueue):
         self.redis.lpush(self.key, self._pack(element))
         log.debug('Pushed ** %s ** for key ** %s **' % (element, self.key))
          
-    def pop(self):
+    def pop(self, block=False):
         """Pop an element"""
-        popped = self.redis.lpop(self.key)
+        if not block:
+            popped = self.redis.lpop(self.key)
+        else:
+            queue, popped = self.redis.blpop(self.key)
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
