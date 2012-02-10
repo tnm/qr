@@ -9,7 +9,7 @@ Quick Setup
 
 You will need:
 
-- [redis](http://redis.io/download "Redis") >= 2.0
+- [redis](http://redis.io/download "Redis") — version 2.0 or better
 - [redis-py](http://github.com/andymccurdy/redis-py "redis-pi")
 
 Redis is available in many package managers by default, or built from source (its only dependency is libc, so it's extremely portable). 
@@ -237,9 +237,7 @@ You can also put most python objects into queues, and you get the same object ba
 Additions, More
 -----------------------
 
-Feel free to fork! 
-
-Thanks to mafr for some initial tests and dlecocq/seomoz for serialization work.
+Thanks to mafr for initial tests and dlecocq/seomoz for serialization work.
 
 Author: Ted Nyman | @tnm
 
