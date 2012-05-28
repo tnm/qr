@@ -4,7 +4,7 @@ import os
 import unittest
 from setuptools import setup, find_packages
 
-version = '0.5.0'
+version = '0.6.0'
 
 LONG_DESCRIPTION = '''
 
@@ -31,11 +31,11 @@ Run setup.py to install qr.
 setup(
     name                 = 'qr',
     version              = version,
-    description          = 'Create and work with Redis-powered queues, capped collections, deques, and stacks',
+    description          = 'Redis-powered queues, capped collections, deques, and stacks',
     long_description     = LONG_DESCRIPTION,
     url                  = 'http://github.com/tnm/qr',
     author               = 'Ted Nyman',
-    author_email         = 'tnm800@gmail.com',
+    author_email         = 'ted@ted.io',
     keywords             = 'Redis, queue, data structures',
     license              = 'MIT',
     packages             = find_packages(),

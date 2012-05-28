@@ -3,7 +3,7 @@ QR | Redis-Based Data Structures in Python
 """
 
 __author__ = 'Ted Nyman'
-__version__ = '0.5.0'
+__version__ = '0.6.0'
 __license__ = 'MIT'
 
 import redis
@@ -37,11 +37,13 @@ log.addHandler(NullHandler())
 connectionPools = {}
 
 def getRedis(**kwargs):
-    """Match up the provided kwargs with an existing connection pool.
+    """
+    Match up the provided kwargs with an existing connection pool.
     In cases where you may want a lot of queues, the redis library will
     by default open at least one connection for each. This uses redis'
     connection pool mechanism to keep the number of open file descriptors
-    tractable."""
+    tractable.
+    """
     key = ':'.join((repr(key) + '=>' + repr(value)) for key, value in kwargs.items())
     try:
         return redis.Redis(connection_pool=connectionPools[key])
@@ -291,7 +293,7 @@ class PriorityQueue(BaseQueue):
         return [self._unpack(o) for o in self.redis.zrange(self.key, 0, -1)]
 
     def pop(self, withscores=False):
-        '''Get the element with the lowest score, and pop it off'''
+        """Get the element with the lowest score, and pop it off"""
         with self.redis.pipeline() as pipe:
             o = pipe.zrange(self.key, 0, 0, withscores=True)
             o = pipe.zremrangebyrank(self.key, 0, 0)
