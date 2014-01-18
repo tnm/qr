@@ -12,20 +12,25 @@ You will need:
 - [redis](http://redis.io/download "Redis") — version 2.0 or better
 - [redis-py](http://github.com/andymccurdy/redis-py "redis-pi")
 
-Redis is available in many package managers by default, or built from source (its only dependency is libc, so it's extremely portable). 
+Redis is available in many package managers by default, or built from source.
 redis-py is available via `setuptools` or `pip`:
 
-	# Install redis-py
-	$> sudo pip install redis
-	# Install qr
-	$> python setup.py install
+```
+sudo pip install redis
+```
+
+Then install `qr`: 
+
+```
+python setup.py install
+```
 
 Basics of QR
 ------------------
 
 QR queues store serialized Python objects (using [cPickle](http://docs.python.org/library/pickle.html) by default), but that can be changed by 
-setting the serializer on a per-queue basis. Functionally, this means "Python object in, and Python object out." There are a few constraints
-on what can be pickled, and thus put into queues (from the Python documentation):
+setting the serializer on a per-queue basis.  This means "Python object in, and Python object out." There are a few constraints
+on what can be pickled, and thus put into queues:
 
 - `None`, `True`, and `False`
 - Integers, long integers, floating point numbers, complex numbers
@@ -65,41 +70,39 @@ A **priority queue**
 Using QR 
 -------------------------------------
 
-QR contains a few small classes to represent each data structure. To get access to one of these fine data structures, just create a relevant instance. You can pass custom options for the underlying Redis instance as keyword arguments. For example:
+QR contains a few small classes to represent each data structure. To get access to one of the data structures, you create an instance. You can pass custom options for the underlying Redis instance as keyword arguments. For example:
 
 ```python
 Queue('brand_new_queue_name', host='localhost', port=9000)
 ```
 
-* A first-position **key** argument is required for all objects. It's the Redis **key** you want to be associated with the QCDS.
-* A second-position **size** argument is required for **CappedCollection**. That's how big you want to let the collection get.
+* A first-position **key** argument is required for all objects. It's the string name of the Redis **key** you want to be associated with the new data structure.
 
 A Queue
 --------
 
-Cool, let's create a Beatles queue, circa 1962. 
+Let's create a Beatles queue, circa 1962. 
 
 	>> from qr import Queue
 	>> bqueue = Queue('Beatles')
 
-You are now the owner of a Queue object (`bqueue`), associated with the Redis key 'Beatles'. 
+You are now the owner of a `Queue` object (`bqueue`), associated with the underlying Redis key 'Beatles'. 
 
 	>> bqueue.push('Pete')
 	>> bqueue.push('John')
 	>> bqueue.push('Paul')
 	>> bqueue.push('George')
 
-Unfortunately, George Martin doesn't like Pete Best, so it's time to pop him. Since Pete was first in, and this is a queue, after all, we 
-just do this:
+Unfortunately, George Martin doesn't like Pete Best, so it's time to pop him. Since Pete was first in:
 
 	>> bqueue.pop()
 	'Pete'
 
-And, of course, we know who joins the band next.
+Ringo joins:
 
 	>> bqueue.push('Ringo')
 
-We can get back (no pun intended) the elements from the queue, too. In fact, each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
+We can return the elements from the queue. Each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
 
 * Call **elements()**, and you'll get back a Python list. 
 
@@ -116,7 +119,7 @@ For example:
 A Capped Collection
 --------------------
 
-I don't know if you've heard, but Donald Knuth will be joining Radiohead soon. They need an organ player. Amazing, I know. Anyway, Radiohead has a max of five members, so someone is going to have to get kicked out of the band. Let's demonstrate this with a Capped Collection.
+Radiohead is adding a band member. Radiohead has a max of five members, so someone is going to have to get kicked out of the band. We'll do this with a Capped Collection.
 
 	>> from qr import CappedCollection
 	>> radiohead_cc = CappedCollection('Radiohead', 5)
@@ -147,7 +150,7 @@ If you wanted a deque for the Rolling Stones:
 	>> from qr import Deque
 	>> stones_deque = Deque('Stones')
 
-The deque, of course, has different methods:
+The deque has different methods:
 
 * push_front()
 * push_back()
@@ -157,7 +160,7 @@ The deque, of course, has different methods:
 A Stack
 --------
 
-The Kinks stack is as easy as:
+The Kinks stack is:
 
 	>> from qr import Stack
 	>> kinks_stack = Stack('Kinks')
@@ -167,8 +170,8 @@ The stack has the same methods as the queue.
 A Priority Queue
 ----------------
 
-Suppose you want to process various tasks in an order other than you received them, and instead,
-base on a score associated with each task. Maybe you want to process bands in the order of how
+Suppose you want to process various tasks in an order other than you received them. Instead you can
+base this processing on a score associated with each task. Maybe you want to process bands in the order of how
 many fans they have:
 
 	>> from qr import PriorityQueue
@@ -208,12 +211,12 @@ All queues have certain additional features. For example, you can add multiple e
 	>> q = Queue('widgets')
 	>> q.extend(['foo', 'bar', 'sprockets'])
 
-You can also get the number of elements in the queue like you would from any normal python list:
+You can also get the number of elements in the queue like you would from any normal Python list:
 
 	>> len(q)
 	3
 
-Or look up a particular element from the queue (or range of elements). **Careful** -- in Redis, lists are linked lists, and so index lookups are **O(n) to lookup the n'th position**. We make this functionality available in qr, but be careful looking up large indices. Looking at the front or back of the queue is cheap, though:
+You can also look up a particular element from the queue (or range of elements). **Note carefully**: in Redis, lists are linked lists, and so index lookups are **O(n) to lookup the n'th position**. Although this functionality available in qr, you should be careful looking up large indices. Looking at the front or back of the queue is cheap, though:
 
 	>> q[0]
 	'foo'
@@ -224,7 +227,7 @@ Or look up a particular element from the queue (or range of elements). **Careful
 	>> q.peek()
 	'foo'
 
-You can also put most python objects into queues, and you get the same object back when you pop it.
+You can also put most Python objects into queues, and you get the same object back when you pop it.
 
 	>> from widgets import Widget
 	>> from sprockets import Sprocket
