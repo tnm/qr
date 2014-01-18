@@ -4,3 +4,5 @@
 build/*
 dist/*
 src/*.egg-info/*
+pip-log.txt
+pip-delete-this-directory.txt
