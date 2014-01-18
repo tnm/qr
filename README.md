@@ -65,7 +65,11 @@ A **priority queue**
 Using QR 
 -------------------------------------
 
-QR contains a few small classes to represent each data structure. To get access to one of these fine data structures, just create a relevant instance.
+QR contains a few small classes to represent each data structure. To get access to one of these fine data structures, just create a relevant instance. You can pass custom options for the underlying Redis instance as keyword arguments. For example:
+
+```python
+Queue('brand_new_queue_name', host='localhost', port=9000)
+```
 
 * A first-position **key** argument is required for all objects. It's the Redis **key** you want to be associated with the QCDS.
 * A second-position **size** argument is required for **CappedCollection**. That's how big you want to let the collection get.
