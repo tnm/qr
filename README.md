@@ -41,7 +41,7 @@ on what can be pickled, and thus put into queues:
 - Classes that are defined at the top level of a module
 - Instances of such classes whose `__dict__` or `__setstate__()` is picklable (see section 'The pickle protocol' for details)
 
-You probably know this already, but here's the 20-second overview of these four data structures.
+You probably know this already, but here's the 20-second overview of these data structures.
 
 A **queue**:
 
